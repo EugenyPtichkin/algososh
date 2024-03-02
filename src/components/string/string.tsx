@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
@@ -6,6 +6,7 @@ import styles from "./string.module.css";
 import { useState } from "react";
 import { Circle } from "../ui/circle/circle";
 import { DELAY_IN_MS } from "../../constants/delays";
+import { ElementStates } from "../../types/element-states";
 
 export const StringComponent: React.FC = () => {
 
@@ -22,14 +23,13 @@ export const StringComponent: React.FC = () => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoader(true);
-    invertString(inputString);
+    invertString(inputString);//расчет значений
     setCurrentValue(0);
-    reverseStr(inputString);
+    reverseStr(inputString);  //отображение
   }
 
   let swapString: string[] = [];
-
-
+  
   const invertString = (inString: string) => {
     swapString = [];
     let symbols: string[] = new Array;
@@ -55,8 +55,8 @@ export const StringComponent: React.FC = () => {
   const sleep = () => new Promise((resolve) => setTimeout(resolve, DELAY_IN_MS));
 
   //функция прокрутки во времени массива строк
-  const reverseStr = async (inString: string) => {
-    let maxSwapValue = Math.floor(inString.length / 2) + 1;
+  const reverseStr = async (inString: string) => {  
+    let maxSwapValue = Math.floor(inString.length / 2) + 1;  
     let currentString: string = '';
     let tmp: number = 0;
     while (tmp < maxSwapValue) {
@@ -69,6 +69,15 @@ export const StringComponent: React.FC = () => {
     }
     setIsLoader(false);
   }
+  const getState = (index: number, current: number, length: number) : ElementStates => {
+    if (index < current || index > length-current) {
+      return ElementStates.Modified;
+    }
+    else if (index === current || index === length-current) {
+      return ElementStates.Changing
+    }
+    return ElementStates.Default;
+  }
 
   return (
     <SolutionLayout title="Строка" >
@@ -79,7 +88,7 @@ export const StringComponent: React.FC = () => {
       <ul className={styles.outString}>
         {showString.split('').map((symbol, index) => (
           <li key={index}>
-            <Circle letter={symbol} />
+            <Circle letter={symbol} state={getState(index, currentValue, inputString.length-1)}/>
           </li>))}
       </ul>
     </SolutionLayout>
