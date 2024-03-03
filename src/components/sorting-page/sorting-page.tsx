@@ -6,43 +6,78 @@ import { Column } from "../ui/column/column";
 import { ElementStates } from "../../types/element-states";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import { Direction } from "../../types/direction";
+import { DELAY_IN_MS } from "../../constants/delays";
 
 
 export const SortingPage: React.FC = () => {
-  const [array, setArray] = useState<{number: number, state: ElementStates}[]>([]);
-  const [sorting, setSorting] = useState<string>('selection');
-  const [isLoaderAcsending, setIsLoaderAcsending] = useState(false);
-  const [isLoaderDescending, setIsLoaderDescending] = useState(false);
-  const [isLoaderNewArray, setIsLoaderNewArray] = useState(false);
-  const [showColumns, setShowColumns] = useState<number[]>([]);
+  const [array, setArray] = useState<{ number: number, state: ElementStates }[]>([]);
+  const [sortType, setSortType] = useState<string>('selection');
+  const [isLoader, setIsLoader] = useState(false);
 
-  
-  const onAcsending = (): void => {
+  const selectSort = (sortDirection: 'ascending' | 'descending', arr: { number: number, state: ElementStates }[], changeArray: any) => {
+    setIsLoader(true);
+
+    setIsLoader(false);
   }
 
-  const onDescending = (): void => {
-  }
+  const bubbleSort = async (sortDirection: 'ascending' | 'descending', arr: { number: number, state: ElementStates }[], changeArray: any) => {
+    //setIsLoader(true);
 
-  const randomArr = (minLen : number, maxLen : number, maxValue : number) : {number: number, state: ElementStates}[]  => {
-    let newArray: {number: number, state: ElementStates}[] = [];
-    let lengthArray : number = Math.floor(Math.random() * ( maxLen - minLen) + minLen);
-    console.log(lengthArray);
-    for (let i: number = 0; i < lengthArray; i++) {
-        newArray.push({
-          number : Math.floor(Math.random() * maxValue ),
-          state : ElementStates.Default
-        });        
+    //создаем копию массива, в котором будут производиться перестановки
+    const array = [...arr];
+    array.forEach(item => (item.state = ElementStates.Default));
+
+    let swap: number = 0;
+    for (let i: number = 0; i < array.length; i++) {     
+      for (let j: number = 0; j < array.length-i-1; j++) {
+        array[j].state = ElementStates.Changing;
+        array[j+1].state = ElementStates.Changing;
+        console.log(`i=${i} ? j=${j}`);
+        if (sortDirection === 'ascending') {
+          console.log('вверх');
+          if (array[j].number > array[j+1].number) { // сортируем элементы по возрастанию 
+            console.log(`array[${j}]=${array[j].number} > array[${j+1}]=${array[j+1].number} => swap`)
+            swap = array[j].number;
+            array[j].number = array[j+1].number
+            array[j+1].number = swap;          
+          }
+        } else {
+          console.log('вниз');
+          if (array[j].number < array[j+1].number) { // сортируем элементы по убыванию
+            console.log(`array[${j}]=${array[j].number} > array[${j+1}]=${array[j+1].number} => swap`)
+            swap = array[j].number;
+            array[j].number = array[j+1].number
+            array[j+1].number = swap;
+          }
+        }
+        console.log(array);
+        changeArray([...array]);
+        await sleep();
+        array[j].state = ElementStates.Default;
+      }
+      array[array.length-1-i].state = ElementStates.Modified;
     }
-    console.log(newArray);
-    setArray(newArray);
-    return newArray;
+    changeArray([...array]);
+    setIsLoader(false);
   }
 
-  const getState = (index: number): ElementStates => {
-    /*return ElementStates.Modified;
-    return ElementStates.Changing;*/
-    return ElementStates.Default;
+  const randomArr = (minLen: number, maxLen: number, maxValue: number): void => {
+    const newArray: { number: number, state: ElementStates }[] = [];
+    const lengthArray: number = Math.floor(Math.random() * (maxLen - minLen) + minLen);
+    //console.log(lengthArray);
+    for (let i: number = 0; i < lengthArray; i++) {
+      newArray.push({
+        number: Math.floor(Math.random() * maxValue),
+        state: ElementStates.Default
+      });
+    }
+    //console.log(newArray);
+    setArray(newArray);
+    return;
   }
+
+  //функция-ожидание
+  const sleep = () => new Promise((resolve) => setTimeout(resolve, DELAY_IN_MS));
 
   return (
     <SolutionLayout title="Сортировка массива">
@@ -50,33 +85,37 @@ export const SortingPage: React.FC = () => {
         <div className={styles.radio} >
           <RadioInput
             label="Выбор"
-            onChange={() => setSorting('selection')}
-            checked={sorting === 'selection'}  />
+            onChange={() => setSortType('selection')}
+            checked={sortType === 'selection'} />
           <RadioInput
             label="Пузырек"
-            onChange={() => setSorting('bubble')}
-            checked={sorting === 'bubble'} />
+            onChange={() => setSortType('bubble')}
+            checked={sortType === 'bubble'} />
         </div>
         <div className={styles.buttons} >
           <Button
             text="По возрастанию"
             disabled={false}
-            isLoader={isLoaderAcsending}
-            onClick={onAcsending}
+            isLoader={isLoader}
+            onClick={() => sortType === 'selection' ?
+              selectSort('ascending', array, setArray) :
+              bubbleSort('ascending', array, setArray)}
             type='submit'
             sorting={Direction.Ascending} />
           <Button
             text="По убыванию"
             disabled={false}
-            isLoader={isLoaderDescending}
-            onClick={onDescending}
+            isLoader={isLoader}
+            onClick={() => sortType === 'selection' ?
+              selectSort('descending', array, setArray) :
+              bubbleSort('descending', array, setArray)}
             type='submit'
             sorting={Direction.Descending} />
         </div>
         <Button
           text="Новый массив"
           disabled={false}
-          isLoader={isLoaderNewArray}
+          isLoader={isLoader}
           onClick={() => randomArr(3, 17, 100)} />
       </section>
 
