@@ -10,10 +10,10 @@ import { ElementStates } from "../../types/element-states";
 
 export const StringComponent: React.FC = () => {
 
-  const [inputString, setInputString] = useState('');
-  const [isLoader, setIsLoader] = useState(false);
-  const [showString, setShowString] = useState('');
-  const [currentValue, setCurrentValue] = useState(0);
+  const [inputString, setInputString] = useState<string>('');
+  const [isLoader, setIsLoader] = useState<boolean>(false);
+  const [showString, setShowString] = useState<string>('');
+  const [currentValue, setCurrentValue] = useState<number>(0);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -56,7 +56,7 @@ export const StringComponent: React.FC = () => {
 
   //функция прокрутки во времени массива строк
   const reverseStr = async (inString: string) => {  
-    let maxSwapValue = Math.floor(inString.length / 2) + 1;  
+    let maxSwapValue : number = Math.floor(inString.length / 2) + 1;  
     let currentString: string = '';
     let tmp: number = 0;
     while (tmp < maxSwapValue) {

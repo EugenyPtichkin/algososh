@@ -34,7 +34,7 @@ export const SortingPage: React.FC = () => {
       array[i].state = ElementStates.Changing;
       value = array[i].number;
       index = i;
-      console.log(`test: array[${i}]=${array[i].number} index=${index} value=${value}`);
+      //console.log(`test: array[${i}]=${array[i].number} index=${index} value=${value}`);
       for (let j: number = i + 1; j < array.length; j++) {
         array[j].state = ElementStates.Changing;
         changeArray([...array]);//отобразить подсветку изменения

@@ -8,10 +8,10 @@ import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 
 export const FibonacciPage: React.FC = () => {
 
-  const [inputNumber, setInputNumber] = useState(0);
-  const [isLoader, setIsLoader] = useState(false);
+  const [inputNumber, setInputNumber] = useState<number>(0);
+  const [isLoader, setIsLoader] = useState<boolean>(false);
   const [outValues, setOutValues] = useState<number[]>([]);
-  const [currentValue, setCurrentValue] = useState(0);
+  const [currentValue, setCurrentValue] = useState<number>(0);
 
   const memo: Record<number, number> = {};
 
