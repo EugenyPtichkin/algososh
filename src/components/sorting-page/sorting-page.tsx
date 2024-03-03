@@ -8,13 +8,20 @@ import { RadioInput } from "../ui/radio-input/radio-input";
 import { Direction } from "../../types/direction";
 import { DELAY_IN_MS } from "../../constants/delays";
 
-
 export const SortingPage: React.FC = () => {
   const [array, setArray] = useState<{ number: number, state: ElementStates }[]>([]);
   const [sortType, setSortType] = useState<string>('selection');
-  const [isLoader, setIsLoader] = useState(false);
+  const [isLoader, setIsLoader] = useState<boolean>(false);
 
-  const selectionSort = async (sortDirection: 'ascending' | 'descending', arr: { number: number, state: ElementStates }[], changeArray: any) => {
+  //сортировка выбором максимума/минимума с запоминанием его индекса
+  const selectionSort = async (
+    sortDirection: 'ascending' | 'descending',
+    arr: { number: number, state: ElementStates }[],
+    changeArray: React.Dispatch<React.SetStateAction<{
+      number: number;
+      state: ElementStates;
+    }[]>>) => {
+
     setIsLoader(true);
 
     //создаем копию массива, в котором будут производиться перестановки
@@ -30,11 +37,13 @@ export const SortingPage: React.FC = () => {
       console.log(`test: array[${i}]=${array[i].number} index=${index} value=${value}`);
       for (let j: number = i + 1; j < array.length; j++) {
         array[j].state = ElementStates.Changing;
+        changeArray([...array]);//отобразить подсветку изменения
+        await sleep();
         if (((sortDirection === 'ascending') && (array[j].number < value)) ||  // сортируем элементы по возрастанию 
           ((sortDirection === 'descending') && (array[j].number > value))) {   // сортируем элементы по убыванию
           value = array[j].number;     //находим минимум/максимум, сдвигаем к началу
           index = j;                   //индекс минимума/максимума
-          if (index !== i) {
+          if (index !== i) { //обмен экстремума с крайним левым элементом
             //console.log(`array[${index}]=${array[index].number} and array[${i}]=${array[i].number} => swap`)
             array[index].number = array[i].number;
             array[i].number = value;
@@ -50,7 +59,15 @@ export const SortingPage: React.FC = () => {
     setIsLoader(false);
   }
 
-  const bubbleSort = async (sortDirection: 'ascending' | 'descending', arr: { number: number, state: ElementStates }[], changeArray: any) => {
+  //сортировка пузырьком
+  const bubbleSort = async (
+    sortDirection: 'ascending' | 'descending',
+    arr: { number: number, state: ElementStates }[],
+    changeArray: React.Dispatch<React.SetStateAction<{
+      number: number;
+      state: ElementStates;
+    }[]>>) => {
+
     setIsLoader(true);
 
     //создаем копию массива, в котором будут производиться перестановки
@@ -62,8 +79,8 @@ export const SortingPage: React.FC = () => {
       for (let j: number = 0; j < array.length - i - 1; j++) {
         array[j].state = ElementStates.Changing;
         array[j + 1].state = ElementStates.Changing;
-        if (((sortDirection === 'ascending') && (array[j].number > array[j + 1].number)) || // сортируем элементы по возрастанию 
-          ((sortDirection === 'descending') && (array[j].number < array[j + 1].number))) {  // сортируем элементы по убыванию
+        if (((sortDirection === 'ascending') && (array[j].number > array[j + 1].number)) || // по возрастанию 
+          ((sortDirection === 'descending') && (array[j].number < array[j + 1].number))) {  // по убыванию
           //console.log(`array[${j}]=${array[j].number} and array[${j + 1}]=${array[j + 1].number} => swap`)
           swap = array[j].number;
           array[j].number = array[j + 1].number
