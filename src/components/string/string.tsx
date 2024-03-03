@@ -69,6 +69,7 @@ export const StringComponent: React.FC = () => {
     }
     setIsLoader(false);
   }
+  
   const getState = (index: number, current: number, length: number) : ElementStates => {
     if (index < current || index > length-current) {
       return ElementStates.Modified;
