@@ -7,10 +7,12 @@ import { useState } from "react";
 import { Circle } from "../ui/circle/circle";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
+import { Stack } from "./stack";
 
 export const StackPage: React.FC = () => {
   const [inputString, setInputString] = useState<string>('');
-  const [stack, setStack] = useState<{ value: string, state: ElementStates }[]>([]);
+  const [stackArray, setStackArray] = useState<{ value: string, state: ElementStates }[]>([]);
+  const stack = new Stack<string>();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -19,7 +21,19 @@ export const StackPage: React.FC = () => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    addToStack();
   }
+const addToStack = () => {
+
+}
+
+const deleteFromStack = () => {
+
+}
+
+const clearStack = () => {
+
+}
 
   //функция-ожидание
   const sleep = () => new Promise((resolve) => setTimeout(resolve, SHORT_DELAY_IN_MS));
@@ -33,30 +47,27 @@ export const StackPage: React.FC = () => {
             text="Добавить"
             disabled={!inputString}
             type='submit'
-            onClick={() => {
-              stack.push({ value: inputString, state: ElementStates.Changing });
-              setInputString('');
-            }}
+            onClick={() => addToStack()}
           />
           <Button
             text="Удалить"
-            disabled={!stack.length}
+            disabled={!stack.getSize()}
             type='submit'
-            onClick={() => stack.pop()} />
+            onClick={() => deleteFromStack()} />
         </div>
         <div className={styles.clearbutton} >
           <Button
             text="Очистить"
             disabled={false}
             type='submit'
-            onClick={() => stack.splice(1, stack.length)}
+            onClick={() => clearStack() }  
           />
         </div>
       </form>
       <ul className={styles.outString}>
-        {stack.map((item, index) => (
+        {stackArray.map((item, index) => (
           <li key={index}>
-            <Circle letter={item.value.toString()} state={item.state} index={index} head = {index === stack.length-1? 'head': ''} />
+            <Circle letter={item.value.toString()} state={item.state} index={index} head = {index === stack.getSize()? 'head': ''} />
           </li>))}
       </ul>
     </SolutionLayout>
