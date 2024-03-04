@@ -12,7 +12,9 @@ import { Stack } from "./stack";
 export const StackPage: React.FC = () => {
   const [inputString, setInputString] = useState<string>('');
   const [stackArray, setStackArray] = useState<{ value: string, state: ElementStates }[]>([]);
-  const stack = new Stack<string>();
+  const [isLoaderAdd, setIsLoaderAdd] = useState<boolean>(false);
+  const [isLoaderDelete, setIsLoaderDelete] = useState<boolean>(false);
+  const stack = new Stack<string>();  
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -23,17 +25,37 @@ export const StackPage: React.FC = () => {
     e.preventDefault();
     addToStack();
   }
-const addToStack = () => {
 
-}
+  const addToStack = async () => {
+    setIsLoaderAdd(true);
+    stack.push(inputString);
+    setInputString('');
+    const lastElement: string = stack.peek() || ''; //вычитать последний элемент из стека
+    stackArray.push({ value: lastElement, state: ElementStates.Changing }); //записать в массив отображения
+    setStackArray([...stackArray]);
+    await sleep();
+    stackArray[stackArray.length - 1].state = ElementStates.Default; //изменить окраску на обычную
+    setStackArray([...stackArray]);
+    setIsLoaderAdd(false);
+    await sleep();    
+  }
 
-const deleteFromStack = () => {
+  const deleteFromStack = async () => {
+    setIsLoaderDelete(true);
+    stack.pop();
+    stackArray[stackArray.length - 1].state = ElementStates.Changing; //изменить окраску у последнего элемента перед удалением
+    setStackArray([...stackArray]);
+    await sleep();
+    stackArray.pop(); 
+    setStackArray([...stackArray]);
+    setIsLoaderDelete(false);
+    await sleep();
+  }
 
-}
-
-const clearStack = () => {
-
-}
+  const clearStack = () => {
+    stack.clear();
+    setStackArray([])    
+  }
 
   //функция-ожидание
   const sleep = () => new Promise((resolve) => setTimeout(resolve, SHORT_DELAY_IN_MS));
@@ -46,28 +68,27 @@ const clearStack = () => {
           <Button
             text="Добавить"
             disabled={!inputString}
-            type='submit'
             onClick={() => addToStack()}
+            isLoader={isLoaderAdd}
           />
           <Button
             text="Удалить"
-            disabled={!stack.getSize()}
-            type='submit'
-            onClick={() => deleteFromStack()} />
+            disabled={stack.getSize() !== 0}
+            onClick={() => deleteFromStack()}
+            isLoader={isLoaderDelete} />
         </div>
         <div className={styles.clearbutton} >
           <Button
             text="Очистить"
             disabled={false}
-            type='submit'
-            onClick={() => clearStack() }  
+            onClick={() => clearStack()}
           />
         </div>
       </form>
       <ul className={styles.outString}>
         {stackArray.map((item, index) => (
           <li key={index}>
-            <Circle letter={item.value.toString()} state={item.state} index={index} head = {index === stack.getSize()? 'head': ''} />
+            <Circle letter={item.value.toString()} state={item.state} index={index} head={index === stackArray.length-1 ? 'top' : ''} />
           </li>))}
       </ul>
     </SolutionLayout>
