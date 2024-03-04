@@ -8,12 +8,13 @@ import { Circle } from "../ui/circle/circle";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
 import { Queue } from "./queue";
+import { IQueueDisplay } from "./interfaceQueueDisplay";
 
 export const QueuePage: React.FC = () => {
   const queueLength: number = 7;
-  const initialArray: { value: string, state: ElementStates, head: string, tail: string }[] = Array.from({ length: queueLength }, () => ({ value: '', state: ElementStates.Default, head: '', tail: '' }));
+  const initialArray: IQueueDisplay[] = Array.from({ length: queueLength }, () => ({ value: '', state: ElementStates.Default, head: '', tail: '' }));
   const [inputString, setInputString] = useState<string>('');
-  const [queueArray, setQueueArray] = useState<{ value: string, state: ElementStates, head: string, tail: string }[]>(initialArray);
+  const [queueArray, setQueueArray] = useState<IQueueDisplay[]>(initialArray);
   const [isLoaderAdd, setIsLoaderAdd] = useState<boolean>(false);
   const [isLoaderDelete, setIsLoaderDelete] = useState<boolean>(false);
   const queue = useMemo(() => new Queue<string>(queueLength), []);//сохранить queue между рендерами!
@@ -55,7 +56,7 @@ export const QueuePage: React.FC = () => {
     queueArray[tail().index].state = ElementStates.Default;
     queueArray[head().index].value = head().item || '';
     queueArray[head().index].head = 'head';
-    if (head().index > 0) { //для ситуации, когда удалены были все элементы очереди посередине очереди
+    if (head().index > 0) { //сбросить надпись head у предыдущего элемента для ситуации, когда удалены были все элементы очереди посередине очереди (index>=1)
       queueArray[head().index - 1].head = '';
     }
 
@@ -134,12 +135,12 @@ export const QueuePage: React.FC = () => {
       <ul className={styles.outString}>
         {queueArray.map((item, index) => (
           <li key={index}>
-            <Circle
-              letter={item.value.toString()}
+            {item && <Circle
+              letter={item.value? item.value.toString():'' }
               state={item.state}
               index={index}
-              head={item.head.toString()}
-              tail={item.tail.toString()} />
+              head={item.head? item.head.toString() : ''}
+              tail={item.tail? item.tail.toString(): ''} />}
           </li>))}
       </ul>
     </SolutionLayout>);

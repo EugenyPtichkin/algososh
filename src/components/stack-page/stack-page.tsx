@@ -8,13 +8,14 @@ import { Circle } from "../ui/circle/circle";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
 import { Stack } from "./stack";
+import { IStackDisplay } from "./interfaceStackDisplay";
 
 export const StackPage: React.FC = () => {
   const [inputString, setInputString] = useState<string>('');
-  const [stackArray, setStackArray] = useState<{ value: string, state: ElementStates }[]>([]);
+  const [stackArray, setStackArray] = useState<IStackDisplay[]>([]);
   const [isLoaderAdd, setIsLoaderAdd] = useState<boolean>(false);
   const [isLoaderDelete, setIsLoaderDelete] = useState<boolean>(false);
-  const stack = useMemo( () => new Stack<string>() , []);  //cохранять стек между рендерами!
+  const stack = useMemo( () => new Stack<IStackDisplay>() , []);  //cохранять стек между рендерами!
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -31,10 +32,12 @@ export const StackPage: React.FC = () => {
       return;
     }
     setIsLoaderAdd(true);
-    stack.push(inputString);
+    stack.push({value: inputString, state: ElementStates.Default});
     setInputString('');
-    const lastElement: string = stack.peek() || ''; //вычитать последний элемент из стека
-    stackArray.push({ value: lastElement, state: ElementStates.Changing }); //записать в массив отображения
+    const lastElement: IStackDisplay | null = stack.peek(); //вычитать последний элемент из стека
+    if (lastElement) lastElement.state = ElementStates.Changing;
+    if (lastElement) stackArray.push(lastElement); //записать в массив отображения
+    //stackArray.push({ value: lastElement, state: ElementStates.Changing }); //записать в массив отображения
     setStackArray([...stackArray]);
     await sleep();
     stackArray[stackArray.length - 1].state = ElementStates.Default; //изменить окраску на обычную
@@ -91,7 +94,7 @@ export const StackPage: React.FC = () => {
       <ul className={styles.outString}>
         {stackArray.map((item, index) => (
           <li key={index}>
-            <Circle letter={item.value.toString()} state={item.state} index={index} head={index === stackArray.length-1 ? 'top' : ''} />
+            <Circle letter={item.value? item.value.toString():''} state={item.state} index={index} head={index === stackArray.length-1 ? 'top' : ''} />
           </li>))}
       </ul>
     </SolutionLayout>

@@ -26,9 +26,6 @@ export class Queue<T> implements IQueue<T> {
       //throw new Error("Maximum length exceeded"); //вызвать ошибку
       console.log("Maximum length exceeded");       //ничего не делать 
     } else {
-      //if (this.isEmpty() && this._head === this._tail) {
-      //  this._head++;  
-     // }
       this.container[this._tail] = item;
       this._tail++;
       this._length++;
