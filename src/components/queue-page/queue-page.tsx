@@ -11,8 +11,6 @@ import { Queue } from "./queue";
 
 export const QueuePage: React.FC = () => {
   const queueLength: number = 7;
-  //const initialItem: { value: string, state: ElementStates, head: string, tail: string } = {value: '', state: ElementStates.Default, head: '', tail: ''};
-  //const initialArray : { value: string, state: ElementStates, head: string, tail: string }[] = [];
   const initialArray: { value: string, state: ElementStates, head: string, tail: string }[] = Array.from({ length: queueLength }, () => ({ value: '', state: ElementStates.Default, head: '', tail: '' }));
   const [inputString, setInputString] = useState<string>('');
   const [queueArray, setQueueArray] = useState<{ value: string, state: ElementStates, head: string, tail: string }[]>(initialArray);
@@ -20,13 +18,9 @@ export const QueuePage: React.FC = () => {
   const [isLoaderDelete, setIsLoaderDelete] = useState<boolean>(false);
   const queue = useMemo(() => new Queue<string>(queueLength), []);//сохранить queue между рендерами!
 
-  //заполнить пустыми значениями исходный массив для отображения
-  //  for(let i: number = 0; i<queueLength; i++) {
-  //    initialArray.push(initialItem);
-  //  }
-  useEffect(() => {
-    console.log(initialArray);
-  }, []);
+  //useEffect(() => {
+  //    console.log(initialArray);
+  //  }, []);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -40,23 +34,29 @@ export const QueuePage: React.FC = () => {
 
   const addToQueue = async () => {
     if (!inputString) {
-      return; //ничего не делать при пустой строке
+      return; //ничего не делать при пустой строке, но не тушить кнопку "Добавить"
     }
 
     setIsLoaderAdd(true);
     queue.enqueue(inputString);
     setInputString('');
-    
+
     //вычитываем значения head и tail из очереди методами queue
     const head: () => { item: string | null; index: number; } = queue.head;
     const tail: () => { item: string | null; index: number; } = queue.tail;
-    console.log(head().item, head().index, tail().item, tail().index, queue.isEmpty());
+    //console.log(head().item, head().index, tail().item, tail().index, queue.isEmpty());
+
+    //только меняю подсветку
+    queueArray[tail().index].state = ElementStates.Changing;
+    setQueueArray([...queueArray]);
+    await sleep();
 
     //обновляем поля в отображаемом массиве
+    queueArray[tail().index].state = ElementStates.Default;
     queueArray[head().index].value = head().item || '';
     queueArray[head().index].head = 'head';
-    if (head().index>0) { //для ситуации, когда удалены были все элементы очереди посередине очереди
-      queueArray[head().index-1].head = '';
+    if (head().index > 0) { //для ситуации, когда удалены были все элементы очереди посередине очереди
+      queueArray[head().index - 1].head = '';
     }
 
     queueArray[tail().index].value = tail().item || '';
@@ -75,19 +75,24 @@ export const QueuePage: React.FC = () => {
     //вычитываем значения head и tail из очереди методами queue
     const head: () => { item: string | null; index: number; } = queue.head;
     const tail: () => { item: string | null; index: number; } = queue.tail;
-    console.log(head().item, head().index, tail().item, tail().index, queue.isEmpty());
+    //console.log(head().item, head().index, tail().item, tail().index, queue.isEmpty());
+
+    //только меняю подсветку
+    queueArray[head().index].state = ElementStates.Changing;
+    setQueueArray([...queueArray]);
+    await sleep();
 
     if (head().index === tail().index) { //последний элемент и требуется его удалить из очереди
       queue.dequeue();
-      queueArray[head().index-1].value = '';      
-      queueArray[head().index-1].tail = '';
+      queueArray[head().index - 1].tail = '';
     } else {
       queue.dequeue();
-      //обновляем поля в отображаемом массиве
-      queueArray[head().index-1].value = '';
-      queueArray[head().index-1].head = '';
+      queueArray[head().index - 1].head = '';
       queueArray[head().index].head = 'head';
     }
+    queueArray[head().index - 1].state = ElementStates.Default;
+    queueArray[head().index - 1].value = '';
+
     setQueueArray([...queueArray]);
     setIsLoaderDelete(false);
     await sleep();
@@ -108,20 +113,20 @@ export const QueuePage: React.FC = () => {
         <div className={styles.buttons} >
           <Button
             text="Добавить"
-            disabled={queue.tail().index === queueLength-1? true: false}
+            disabled={queue.tail().index === queueLength - 1 ? true : false} /*притушить при когда добавлять некуда*/
             onClick={() => addToQueue()}
             isLoader={isLoaderAdd}
           />
           <Button
             text="Удалить"
-            disabled={(queue.head().index === queueLength? true: false) || queue.isEmpty()}
+            disabled={(queue.head().index === queueLength ? true : false) || queue.isEmpty()} /*притушить при пустой очереди или когда удалять в конце нечего*/
             onClick={() => deleteFromQueue()}
             isLoader={isLoaderDelete} />
         </div>
         <div className={styles.clearbutton} >
           <Button
             text="Очистить"
-            disabled={false}
+            disabled={queue.head().index === 0 && queue.isEmpty()}/*притушить кнопку очистить только когда пусто и указатель head=0 */
             onClick={() => clearQueue()}
           />
         </div>
@@ -137,6 +142,5 @@ export const QueuePage: React.FC = () => {
               tail={item.tail.toString()} />
           </li>))}
       </ul>
-    </SolutionLayout>
-  );
+    </SolutionLayout>);
 };

@@ -40,10 +40,7 @@ export class Queue<T> implements IQueue<T> {
       //throw new Error("No elements in the queue"); //вызвать ошибку
       console.log("No elements in the queue");       //ничего не делать      
     } else {
-      //if (this._head !== this._tail) {
-      //  this._head++;
-      //} 
-      this.container[this._head] = null;
+      this.container[this._head] = null;            
       this._head++;
       this._length--;
     }
