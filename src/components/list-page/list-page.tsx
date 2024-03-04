@@ -20,11 +20,15 @@ export const ListPage: React.FC = () => {
   const list = useMemo(() => new LinkedList<number>(), []);//сохранить queue между рендерами!
 
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const onChangeString = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
-    //setInputString(e.target.value);
+    setInputString(e.target.value);
   }
-
+  
+  const onChangeIndex = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    e.preventDefault();
+    setInputIndex(e.target.value);
+  }
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     //addToQueue();
@@ -45,7 +49,7 @@ export const ListPage: React.FC = () => {
             type="text"
             maxLength={4}
             isLimitText={true}
-            onChange={onChange}
+            onChange={onChangeString}
             value={inputString}
             style={{ width: 204 }}
           />
@@ -80,9 +84,11 @@ export const ListPage: React.FC = () => {
         </div>
         <div className={styles.indexes}>
           <Input
+            min={1}
+            max={listArray.length}
             type="number"
             isLimitText={false}
-            onChange={onChange}
+            onChange={onChangeIndex}
             value={inputIndex}
             style={{ width: 204 }}
           />
@@ -111,7 +117,7 @@ export const ListPage: React.FC = () => {
               index={index}
               head={item.head ? item.head.toString() : ''}
               tail={item.tail ? item.tail.toString() : ''} />}
-              <ArrowIcon/>
+              {index !== listArray.length-1 && <ArrowIcon/>}
           </li>))}
       </ul>
     </SolutionLayout >
