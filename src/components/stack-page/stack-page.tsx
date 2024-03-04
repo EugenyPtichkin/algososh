@@ -27,6 +27,9 @@ export const StackPage: React.FC = () => {
   }
 
   const addToStack = async () => {
+    if(!inputString) {
+      return;
+    }
     setIsLoaderAdd(true);
     stack.push(inputString);
     setInputString('');
@@ -67,7 +70,7 @@ export const StackPage: React.FC = () => {
         <div className={styles.buttons} >
           <Button
             text="Добавить"
-            disabled={!inputString}
+            disabled={false}
             onClick={() => addToStack()}
             isLoader={isLoaderAdd}
           />
