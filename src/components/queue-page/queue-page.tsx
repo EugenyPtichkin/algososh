@@ -42,8 +42,9 @@ export const QueuePage: React.FC = () => {
     if (!inputString) {
       return; //ничего не делать при пустой строке
     }
+
     setIsLoaderAdd(true);
-    queue.enqueue(inputString); 
+    queue.enqueue(inputString);
     setInputString('');
     
     //вычитываем значения head и tail из очереди методами queue
@@ -52,11 +53,17 @@ export const QueuePage: React.FC = () => {
     console.log(head().item, head().index, tail().item, tail().index, queue.isEmpty());
 
     //обновляем поля в отображаемом массиве
-    queueArray[head().index].value = head().item ||''; 
-    queueArray[head().index].head = 'head'; 
+    queueArray[head().index].value = head().item || '';
+    queueArray[head().index].head = 'head';
+    if (head().index>0) { //для ситуации, когда удалены были все элементы очереди посередине очереди
+      queueArray[head().index-1].head = '';
+    }
 
-    queueArray[tail().index].value = tail().item ||''; 
-    queueArray[tail().index].tail = 'tail'; 
+    queueArray[tail().index].value = tail().item || '';
+    if (tail().index > 0) {
+      queueArray[tail().index - 1].tail = '';
+    }
+    queueArray[tail().index].tail = 'tail';
 
     setQueueArray([...queueArray]);
     setIsLoaderAdd(false);
@@ -65,14 +72,22 @@ export const QueuePage: React.FC = () => {
 
   const deleteFromQueue = async () => {
     setIsLoaderDelete(true);
-    queue.dequeue();
-    
     //вычитываем значения head и tail из очереди методами queue
     const head: () => { item: string | null; index: number; } = queue.head;
     const tail: () => { item: string | null; index: number; } = queue.tail;
     console.log(head().item, head().index, tail().item, tail().index, queue.isEmpty());
-    
 
+    if (head().index === tail().index) { //последний элемент и требуется его удалить из очереди
+      queue.dequeue();
+      queueArray[head().index-1].value = '';      
+      queueArray[head().index-1].tail = '';
+    } else {
+      queue.dequeue();
+      //обновляем поля в отображаемом массиве
+      queueArray[head().index-1].value = '';
+      queueArray[head().index-1].head = '';
+      queueArray[head().index].head = 'head';
+    }
     setQueueArray([...queueArray]);
     setIsLoaderDelete(false);
     await sleep();
@@ -93,13 +108,13 @@ export const QueuePage: React.FC = () => {
         <div className={styles.buttons} >
           <Button
             text="Добавить"
-            disabled={false}
+            disabled={queue.tail().index === queueLength-1? true: false}
             onClick={() => addToQueue()}
             isLoader={isLoaderAdd}
           />
           <Button
             text="Удалить"
-            disabled={false}
+            disabled={(queue.head().index === queueLength? true: false) || queue.isEmpty()}
             onClick={() => deleteFromQueue()}
             isLoader={isLoaderDelete} />
         </div>
