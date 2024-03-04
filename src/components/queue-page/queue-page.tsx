@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
@@ -10,11 +10,23 @@ import { ElementStates } from "../../types/element-states";
 import { Queue } from "./queue";
 
 export const QueuePage: React.FC = () => {
+  const queueLength: number = 7;
+  //const initialItem: { value: string, state: ElementStates, head: string, tail: string } = {value: '', state: ElementStates.Default, head: '', tail: ''};
+  //const initialArray : { value: string, state: ElementStates, head: string, tail: string }[] = [];
+  const initialArray: { value: string, state: ElementStates, head: string, tail: string }[] = Array.from({ length: queueLength }, () => ({ value: '', state: ElementStates.Default, head: '', tail: '' }));
   const [inputString, setInputString] = useState<string>('');
-  const [queueArray, setQueueArray] = useState<{ value: string, state: ElementStates }[]>([]);
+  const [queueArray, setQueueArray] = useState<{ value: string, state: ElementStates, head: string, tail: string }[]>(initialArray);
   const [isLoaderAdd, setIsLoaderAdd] = useState<boolean>(false);
   const [isLoaderDelete, setIsLoaderDelete] = useState<boolean>(false);
-  const queue = new Queue<string>(7);  
+  const queue = useMemo(() => new Queue<string>(queueLength), []);//сохранить queue между рендерами!
+
+  //заполнить пустыми значениями исходный массив для отображения
+  //  for(let i: number = 0; i<queueLength; i++) {
+  //    initialArray.push(initialItem);
+  //  }
+  useEffect(() => {
+    console.log(initialArray);
+  }, []);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -27,29 +39,40 @@ export const QueuePage: React.FC = () => {
   }
 
   const addToQueue = async () => {
-    if(!inputString) {
-      return;
+    if (!inputString) {
+      return; //ничего не делать при пустой строке
     }
     setIsLoaderAdd(true);
-    queue.enqueue(inputString);
+    queue.enqueue(inputString); 
     setInputString('');
-    const lastElement: string = queue.peek() || ''; //вычитать последний элемент из стека
-    queueArray.push({ value: lastElement, state: ElementStates.Changing }); //записать в массив отображения
-    setQueueArray([...queueArray]);
-    await sleep();
-    queueArray[queueArray.length - 1].state = ElementStates.Default; //изменить окраску на обычную
+    
+    //вычитываем значения head и tail из очереди методами queue
+    const head: () => { item: string | null; index: number; } = queue.head;
+    const tail: () => { item: string | null; index: number; } = queue.tail;
+    console.log(head().item, head().index, tail().item, tail().index, queue.isEmpty());
+
+    //обновляем поля в отображаемом массиве
+    queueArray[head().index].value = head().item ||''; 
+    queueArray[head().index].head = 'head'; 
+
+    queueArray[tail().index].value = tail().item ||''; 
+    queueArray[tail().index].tail = 'tail'; 
+
     setQueueArray([...queueArray]);
     setIsLoaderAdd(false);
-    await sleep();    
+    await sleep();
   }
 
   const deleteFromQueue = async () => {
     setIsLoaderDelete(true);
     queue.dequeue();
-    queueArray[queueArray.length - 1].state = ElementStates.Changing; //изменить окраску у последнего элемента перед удалением
-    setQueueArray([...queueArray]);
-    await sleep();
-    queueArray.pop(); 
+    
+    //вычитываем значения head и tail из очереди методами queue
+    const head: () => { item: string | null; index: number; } = queue.head;
+    const tail: () => { item: string | null; index: number; } = queue.tail;
+    console.log(head().item, head().index, tail().item, tail().index, queue.isEmpty());
+    
+
     setQueueArray([...queueArray]);
     setIsLoaderDelete(false);
     await sleep();
@@ -57,7 +80,7 @@ export const QueuePage: React.FC = () => {
 
   const clearQueue = () => {
     queue.clear();
-    setQueueArray([])    
+    setQueueArray([...initialArray]);
   }
 
   //функция-ожидание
@@ -91,7 +114,12 @@ export const QueuePage: React.FC = () => {
       <ul className={styles.outString}>
         {queueArray.map((item, index) => (
           <li key={index}>
-            <Circle letter={item.value.toString()} state={item.state} index={index} head={index === queueArray.length-1 ? 'top' : ''} />
+            <Circle
+              letter={item.value.toString()}
+              state={item.state}
+              index={index}
+              head={item.head.toString()}
+              tail={item.tail.toString()} />
           </li>))}
       </ul>
     </SolutionLayout>

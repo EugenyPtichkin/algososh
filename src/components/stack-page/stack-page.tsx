@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
@@ -14,7 +14,7 @@ export const StackPage: React.FC = () => {
   const [stackArray, setStackArray] = useState<{ value: string, state: ElementStates }[]>([]);
   const [isLoaderAdd, setIsLoaderAdd] = useState<boolean>(false);
   const [isLoaderDelete, setIsLoaderDelete] = useState<boolean>(false);
-  const stack = new Stack<string>();  
+  const stack = useMemo( () => new Stack<string>() , []);  //cохранять стек между рендерами!
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -76,7 +76,7 @@ export const StackPage: React.FC = () => {
           />
           <Button
             text="Удалить"
-            disabled={stack.getSize() !== 0}
+            disabled={stack.getSize() === 0}
             onClick={() => deleteFromStack()}
             isLoader={isLoaderDelete} />
         </div>
