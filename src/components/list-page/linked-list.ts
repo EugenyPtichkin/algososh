@@ -11,9 +11,9 @@ interface ILinkedList<T> {
   append: (element: T) => void;
   prepend: (element: T) => void;
   insertAt: (element: T, position: number) => void;
-  deleteAt: (position: number) => void;
-  deleteHead: () => void;
-  deleteTail: () => void;
+  deleteAt: (position: number) => T | null;
+  deleteHead: () => T | null;
+  deleteTail: () => T | null;
   getSize: () => number;
   print: () => void;
   toArray: () => T[];
@@ -22,11 +22,11 @@ interface ILinkedList<T> {
 export class LinkedList<T> implements ILinkedList<T> {
   private head: Node<T> | null;
   private size: number;
-  constructor(initialState? : T[]) {
+  constructor(initialState?: T[]) {
     this.head = null;
     this.size = 0;
     initialState?.forEach((item) => {
-      this.insertAt(item, 0) 
+      this.insertAt(item, 0)
     });
   }
 
@@ -71,23 +71,27 @@ export class LinkedList<T> implements ILinkedList<T> {
 
     if (index === 0 && curr) {// удалить элемент из начала списка
       this.head = curr.next;
-    } else {
-      let currIndex: number = 0;
-      let prev: Node<T> | null = null;
-      // перебрать элементы в списке до нужной позиции, запоминая предыдущий элемент
-      while (currIndex !== index - 1 && curr) {
-        prev = curr;
-        curr = curr.next;
-        currIndex++;
-      }
-      // пропустить удаляемый элемент, исправив ссылки указателей
-      if (prev && curr) {
-        prev.next = curr.next;
-      }
+      this.size--;
+      return this.head ? this.head.value : null;
     }
+
+    let currIndex: number = 0;
+    let prev: Node<T> | null = null;
+    // перебрать элементы в списке до нужной позиции, запоминая предыдущий элемент
+    while (curr && currIndex !== index) {
+      prev = curr;
+      curr = curr.next;
+      currIndex++;
+    }
+    // пропустить удаляемый элемент, исправив ссылки указателей
+    if (prev && curr) {
+      prev.next = curr.next;
+    }
+
     this.size--;
     return curr ? curr.value : null; //вернуть значение удаленного элемента для отображения
   }
+
 
   deleteHead() {
     if (this.size === 0) { //если список пустой
@@ -121,7 +125,7 @@ export class LinkedList<T> implements ILinkedList<T> {
       prev.next = null;
       this.size--;
     } else { //предыдущего нет, то есть был единственный элемент
-      this.head=null;
+      this.head = null;
       this.size = 0;
     }
     return curr ? curr.value : null; //вернуть значение удаленного элемента для отображения
@@ -161,7 +165,7 @@ export class LinkedList<T> implements ILinkedList<T> {
 
   print() { //отобразить в консоли значения всех ячеек списка
     let curr: Node<T> | null = this.head;
-    let res : string = '';
+    let res: string = '';
     while (curr) {
       res += `${curr.value} `;
       curr = curr.next;

@@ -5,7 +5,7 @@ import { Button } from "../ui/button/button";
 import styles from "./linked-list-page.module.css";
 import { useState } from "react";
 import { Circle } from "../ui/circle/circle";
-import { DELAY_IN_MS } from "../../constants/delays";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
 import { LinkedList } from "./linked-list";
 import { IListDisplay } from "./interfaceListDisplay";
@@ -16,7 +16,14 @@ export const ListPage: React.FC = () => {
   const initialArray = useMemo(() => {
     return ['0', '34', '8', '1'];
   }, [])
-  const [listArray, setListArray] = useState<IListDisplay[]>(initialArray.map(item => { return { letter: item, state: ElementStates.Default } }));
+  const [listArray, setListArray] = useState<IListDisplay[]>(initialArray.map((item, index) => {
+    return {
+      letter: item,
+      state: ElementStates.Default,
+      head: index === 0 ? 'head' : '',
+      tail: index === initialArray.length - 1 ? 'tail' : ''
+    }
+  }));
   const [inputString, setInputString] = useState<string>('');
   const [inputIndex, setInputIndex] = useState<string>('');
   const list = useMemo(() => new LinkedList<string>(initialArray.reverse()), []);//сохранить list между рендерами!
@@ -169,9 +176,15 @@ export const ListPage: React.FC = () => {
   /*    Добавление элемента по указанному индексу    */
   /*-------------------------------------------------*/
   const addByIndex = async (inputIndex: string) => {
-    if (Number(inputIndex) < 0 || Number(inputIndex) > list.getSize()) { //при некорректном индексе вывести сообщение в лог
-      console.log(`Запрашиваемый индекс ${inputIndex} вне диапазона {0...${list.getSize()}}`)
+    if (!inputString) { //при пустой строке ввода не делать ничего, но не тушить кнопку "Добавить"
       return;
+    }
+    
+    if (Number(inputIndex) < 0 || Number(inputIndex) > list.getSize() - 1) {//при некорректном индексе вывести сообщение в лог       
+      console.log(`Запрашиваемый индекс ${inputIndex} вне диапазона {0...${list.getSize() - 1}}`);
+      if (!((Number(inputIndex) === 0) && (list.getSize() === 0))) { //но пропустить ситуацию при нулевом индексе и пустом списке 
+        return;
+      }      
     }
     setDisplayButtons({ ...displayButtons, isAddByIndex: true });
 
@@ -218,15 +231,53 @@ export const ListPage: React.FC = () => {
   /*    Удаление элемента по указанному индексу      */
   /*-------------------------------------------------*/
   const deleteByIndex = async (inputIndex: string) => {
-    setDisplayButtons({ ...displayButtons, isDeleteByIndex: true });
+    if ((Number(inputIndex) < 0) || (Number(inputIndex) > (list.getSize() - 1))) { //при некорректном индексе вывести сообщение в лог
+      console.log(`Запрашиваемый индекс ${inputIndex} вне диапазона {0...${list.getSize() - 1}}`)
+      return;
+    } else {
 
+      setDisplayButtons({ ...displayButtons, isDeleteByIndex: true });
+      const array: IListDisplay[] = [...listArray]; //вычитываем массив из состояния
 
+      for (let i: number = 0; i <= Number(inputIndex); i++) {
+        array[i] = { ...array[i], state: ElementStates.Changing }; //закрашиваем пройденные элементы
+        setListArray([...array]); //применить изменения состояния очереди
+        await sleep();
+      }
+      //отобразить нижний элемент под удаляемым, очистить значение
+      array[Number(inputIndex)] = { ...array[Number(inputIndex)], delete: true, extra: array[Number(inputIndex)].letter, letter: '', tail: '' };
+      setListArray([...array]); //применить изменения состояния очереди
+      await sleep();
 
-    setDisplayButtons({ ...displayButtons, isDeleteByIndex: false });
+      array[Number(inputIndex)] = { ...array[Number(inputIndex)], delete: false, extra: undefined }; //убрать отображение нижнего элемента под удаляемым
+      
+      //если только удаляется не последний элемент, то:
+      if (array.length !== 1 && Number(inputIndex) == array.length - 1) { //передвинуть удаленную метку tail нижним элементом если удалялся последний элемент
+        array[Number(inputIndex) - 1] = { ...array[Number(inputIndex) - 1], tail: 'tail' };        
+      }
+      if (array.length !== 1 && Number(inputIndex) == 0) { //передвинуть удаленную метку head если удалялся первый
+        array[Number(inputIndex) + 1] = { ...array[Number(inputIndex) + 1], head: 'head' };
+      }
+     
+      array.splice(Number(inputIndex), 1); //удалить найденный элемент из массива
+
+      setListArray([...array]); //применить изменения состояния очереди
+      await sleep();
+
+      array.forEach((item) => item.state = ElementStates.Default);   //вернуть всем подкрашенным элементам стандартные цвета
+      setListArray([...array]); //применить изменения состояния очереди
+      await sleep();
+
+      list.deleteAt(Number(inputIndex));  //удалить по индексу (учитывая что первый нулевой)
+      const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
+      console.log(`list of nodes= ${currentArray ? currentArray : null}`);
+
+      setDisplayButtons({ ...displayButtons, isDeleteByIndex: false });
+    }
   }
 
   //функция-ожидание
-  const sleep = () => new Promise((resolve) => setTimeout(resolve, DELAY_IN_MS));
+  const sleep = () => new Promise((resolve) => setTimeout(resolve, SHORT_DELAY_IN_MS));
 
   return (
     <SolutionLayout title="Связный список">
