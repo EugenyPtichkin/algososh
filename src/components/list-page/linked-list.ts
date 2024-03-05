@@ -26,7 +26,7 @@ export class LinkedList<T> implements ILinkedList<T> {
     this.head = null;
     this.size = 0;
     initialState?.forEach((item) => {
-      this.insertAt(item, 0)
+      this.insertAt(item, 0) 
     });
   }
 
