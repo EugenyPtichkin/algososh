@@ -12,19 +12,14 @@ import { IListDisplay } from "./interfaceListDisplay";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
 
 export const ListPage: React.FC = () => {
-  const initialArray: string[] = ['0', '34', '8', '1'];
-  const initialState: IListDisplay[] = [];
-  const [listArray, setListArray] = useState<IListDisplay[]>(initialState);
+  const initialArray = useMemo ( () => {
+    return ['0', '34', '8', '1'];
+  }, [])
+  const [listArray, setListArray] = useState<IListDisplay[]>(initialArray.map(item => {return { letter: item, state: ElementStates.Default}}));    
   const [isLoader, setIsLoader] = useState<boolean>(false);
   const [inputString, setInputString] = useState<string>('');
   const [inputIndex, setInputIndex] = useState<string>('');
   const list = useMemo(() => new LinkedList<string>(initialArray), []);//сохранить list между рендерами!
-
-  useEffect(() => {
-    initialArray.forEach((item, index) => {
-      initialState.unshift({ letter: item, state: ElementStates.Default, head: index === initialArray.length-1? 'head' : '', tail: index === 0? 'tail' : '' });
-    })
-  }, [initialArray]);
 
   const onChangeString = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -46,14 +41,20 @@ export const ListPage: React.FC = () => {
     const array: IListDisplay[] = [...listArray]; //вычитываем массив из состояния
     list.prepend(inputString);  //добавить в очередь в начало 
     const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
-    console.log(`list of nodes= ${currentArray}`);
+    console.log(`list of nodes= ${currentArray?currentArray:null}`);
 
-    array[0] = {...array[0], add: true, extra: inputString, head: ''}; //отобразить верхний элемент над первым
-    setListArray([...array]); //применить изменения состояния очереди
-    await sleep(); 
-    
-    array[0] = {...array[0], add: false, extra: undefined};      //убрать отображение верхнего элемента над первым       
-    array.unshift({ letter: inputString, state: ElementStates.Modified, head: 'head' });//добавить вперед массива отображения с зеленым цветом
+    if (array.length > 0) {  
+      array[0] = {...array[0], add: true, extra: inputString, head: ''}; //отобразить верхний элемент над первым
+      setListArray([...array]); //применить изменения состояния очереди
+      await sleep(); 
+      array[0] = {...array[0], add: false, extra: undefined};//убрать отображение верхнего элемента над первым       
+      array.unshift({ letter: inputString, state: ElementStates.Modified, head: 'head', tail: '' });//добавить вперед массива отображения с зеленым цветом
+    } else { //особый случай - добавлен первый элемент
+      array.unshift({ letter: '', state: ElementStates.Default, add: true, extra: inputString, head: '', tail: '' });
+      setListArray([...array]); //применить изменения состояния очереди
+      await sleep(); 
+      array[0] = {...array[0], add: false, extra: undefined, letter: inputString, state: ElementStates.Modified, head: 'head', tail: 'tail'};             
+    }
     setListArray([...array]); //применить изменения состояния очереди
     await sleep();
 
@@ -74,12 +75,21 @@ export const ListPage: React.FC = () => {
     const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
     console.log(`list of nodes= ${currentArray}`);
 
-    array[array.length-1] = {...array[array.length-1], add: true, extra: inputString}; //отобразить верхний элемент над последним
-    setListArray([...array]); //применить изменения состояния очереди
-    await sleep(); 
-    
-    array[array.length-1] = {...array[array.length-1], add: false, extra: undefined,  tail: ''}; //убрать отображение верхнего элемента над первым       
-    array.push({ letter: inputString, state: ElementStates.Modified, tail: 'tail'  });//добавить назад массива отображения
+    if(array.length !== 0) { //при ненулевой длине очереди
+      array[array.length-1] = {...array[array.length-1], add: true, extra: inputString, head: ''}; //отобразить верхний элемент над последним
+      setListArray([...array]); //применить изменения состояния очереди
+      await sleep(); 
+      array[array.length-1] = {...array[array.length-1], add: false, extra: undefined,  tail: ''}; //убрать отображение верхнего элемента над первым 
+      array.push({ letter: inputString, state: ElementStates.Modified, tail: 'tail', head: array.length === 0? 'head' : '' });//добавить назад массива отображения
+    } else { //особый случай - очередь пуста
+      array.push({ letter: '', state: ElementStates.Default, tail: '', head: '', add: true, extra: inputString });//сначала добавить пустой элемент массива      
+      setListArray([...array]); //применить изменения состояния очереди
+      await sleep(); 
+      array[0] = {...array[0], add: false, extra: undefined, letter: inputString, state: ElementStates.Modified, tail: 'tail', head: 'head'};
+    }
+    if (array.length === 2)  {
+      array[0] = {...array[0], head: 'head'}; //добавить head если добавлен второй элемент очереди (head удален выше)
+    }  
     setListArray([...array]); //применить изменения состояния очереди
     await sleep();
 
@@ -92,10 +102,18 @@ export const ListPage: React.FC = () => {
 
   const deleteFromHead = async () => {
     const array: IListDisplay[] = [...listArray]; //вычитываем массив из состояния
-    list.deleteHead();  //удалить один элемент из начала очереди
-    array.shift();  //удалить один элемент с начала массива отображения
 
-    list.print();
+    array[0] = {...array[0], delete: true, extra: array[0].letter, letter: '', tail: ''}; //отобразить нижний элемент под первым, очистить значение
+    setListArray([...array]); //применить изменения состояния очереди
+    await sleep(); 
+    
+    array[0] = {...array[0], delete: false, extra: undefined}; //убрать отображение нижнего элемента под первым
+    array.shift();                                             //удалить первый элемент массива отображения
+    if (array.length !== 0) array[0] = {...array[0], head : 'head'};//добавить надпись head при ненулевой длине очереди
+    setListArray([...array]); //применить изменения состояния очереди
+    await sleep();
+    
+    list.deleteHead();  //удалить один элемент из начала очереди
     const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
     console.log(`list of nodes= ${currentArray}`);
 
@@ -105,16 +123,25 @@ export const ListPage: React.FC = () => {
 
   const deleteFromTail = async () => {
     const array: IListDisplay[] = [...listArray]; //вычитываем массив из состояния
-    list.deleteTail();  //удалить один элемент из конца очереди
-    array.pop();  //удалить один элемент из конца массива отображения
 
-    list.print();
+    array[array.length-1] = {...array[array.length-1], delete: true, extra: array[array.length-1].letter, letter: '', tail: ''}; //отобразить нижний элемент под первым, очистить значение
+    setListArray([...array]); //применить изменения состояния очереди
+    await sleep(); 
+    
+    array[array.length-1] = {...array[array.length-1], delete: false, extra: undefined}; //убрать отображение нижнего элемента под первым
+    array.pop();                                             //удалить последний элемент массива отображения
+    if (array.length !== 0) array[array.length-1] = {...array[array.length-1], tail : 'tail'};//добавить надпись tail при ненулевой длине очереди
+    setListArray([...array]); //применить изменения состояния очереди
+    await sleep();
+    
+    list.deleteTail();  //удалить один элемент из конца очереди
     const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
     console.log(`list of nodes= ${currentArray}`);
 
     setListArray([...array]); //применить изменения состояния очереди
     await sleep();
   }
+
   const addByIndex = () => { }
   const deleteByIndex = () => { }
 
