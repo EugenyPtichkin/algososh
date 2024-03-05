@@ -9,4 +9,7 @@ export interface IListDisplay {
   tailType?: "string" | "element";
   extraClass?: string;
   isSmall?: boolean;
+  add?: boolean;
+  delete?:boolean;
+  extra?:string;
 }

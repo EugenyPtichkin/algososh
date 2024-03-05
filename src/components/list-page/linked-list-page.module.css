@@ -35,3 +35,15 @@
   align-items: center;
   gap: 16px;
 }
+
+.top {
+  position: absolute;
+  top: -70px;
+  left: 13px;
+}
+
+.bottom {
+  position: absolute;
+  top: 120px;
+  left: 13px;
+}
