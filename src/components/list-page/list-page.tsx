@@ -10,12 +10,11 @@ import { ElementStates } from "../../types/element-states";
 import { LinkedList } from "./linked-list";
 import { IListDisplay } from "./interfaceListDisplay";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
+import { getRandomNumber } from "./utils/get-random-number";
 
 export const ListPage: React.FC = () => {
   const maxListLength: number = 7;
-  const initialArray = useMemo(() => {
-    return ['0', '34', '8', '1'];
-  }, [])
+  const initialArray = useMemo(() => Array.from({length: 6}, () => `${getRandomNumber()}`), []);
   const [listArray, setListArray] = useState<IListDisplay[]>(initialArray.map((item, index) => {
     return {
       letter: item,
@@ -61,7 +60,7 @@ export const ListPage: React.FC = () => {
     const array: IListDisplay[] = [...listArray]; //вычитываем массив из состояния
     list.prepend(inputString);  //добавить в очередь в начало 
     const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
-    console.log(`list of nodes= ${currentArray ? currentArray : null}`);
+    //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
     if (array.length > 0) {
       array[0] = { ...array[0], add: true, extra: inputString, head: '' }; //отобразить верхний элемент над первым
@@ -97,7 +96,7 @@ export const ListPage: React.FC = () => {
     const array: IListDisplay[] = [...listArray]; //вычитываем массив из состояния
     list.append(inputString);  //добавить в конец очереди
     const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
-    console.log(`list of nodes= ${currentArray ? currentArray : null}`);
+    //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
     if (array.length !== 0) { //при ненулевой длине очереди
       array[array.length - 1] = { ...array[array.length - 1], add: true, extra: inputString, head: '' }; //отобразить верхний элемент над последним
@@ -144,7 +143,7 @@ export const ListPage: React.FC = () => {
 
     list.deleteHead();  //удалить один элемент из начала очереди
     const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
-    console.log(`list of nodes= ${currentArray ? currentArray : null}`);
+    //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
     setDisplayButtons({ ...displayButtons, isDeleteHead: false });
   }
@@ -168,7 +167,7 @@ export const ListPage: React.FC = () => {
 
     list.deleteTail();  //удалить один элемент из конца очереди
     const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
-    console.log(`list of nodes= ${currentArray ? currentArray : null}`);
+    //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
     setDisplayButtons({ ...displayButtons, isDeleteTail: false });
   }
@@ -181,7 +180,7 @@ export const ListPage: React.FC = () => {
     }
     
     if (Number(inputIndex) < 0 || Number(inputIndex) > list.getSize() - 1) {//при некорректном индексе вывести сообщение в лог       
-      console.log(`Запрашиваемый индекс ${inputIndex} вне диапазона {0...${list.getSize() - 1}}`);
+      //console.log(`Запрашиваемый индекс ${inputIndex} вне диапазона {0...${list.getSize() - 1}}`);
       if (!((Number(inputIndex) === 0) && (list.getSize() === 0))) { //но пропустить ситуацию при нулевом индексе и пустом списке 
         return;
       }      
@@ -189,9 +188,9 @@ export const ListPage: React.FC = () => {
     setDisplayButtons({ ...displayButtons, isAddByIndex: true });
 
     const array: IListDisplay[] = [...listArray];    //вычитываем массив из состояния
-    list.insertAt(inputString, Number(inputIndex));  //добавить в очередь по указанному индексу
+    list.addByIndex(inputString, Number(inputIndex));  //добавить в очередь по указанному индексу
     const currentArray: string[] = list.toArray();   //контроль текущего состояния очереди
-    console.log(`list of nodes= ${currentArray ? currentArray : null}`);
+    //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
     if (array.length > 0) {
       for (let i: number = 0; i <= Number(inputIndex); i++) {
         array[i] = { ...array[i], add: true, extra: inputString, head: '', state: ElementStates.Changing }; //отобразить верхний элемент над текущим элементом
@@ -232,7 +231,7 @@ export const ListPage: React.FC = () => {
   /*-------------------------------------------------*/
   const deleteByIndex = async (inputIndex: string) => {
     if ((Number(inputIndex) < 0) || (Number(inputIndex) > (list.getSize() - 1))) { //при некорректном индексе вывести сообщение в лог
-      console.log(`Запрашиваемый индекс ${inputIndex} вне диапазона {0...${list.getSize() - 1}}`)
+      //console.log(`Запрашиваемый индекс ${inputIndex} вне диапазона {0...${list.getSize() - 1}}`)
       return;
     } else {
 
@@ -268,9 +267,9 @@ export const ListPage: React.FC = () => {
       setListArray([...array]); //применить изменения состояния очереди
       await sleep();
 
-      list.deleteAt(Number(inputIndex));  //удалить по индексу (учитывая что первый нулевой)
+      list.deleteByIndex(Number(inputIndex));  //удалить по индексу (учитывая что первый нулевой)
       const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
-      console.log(`list of nodes= ${currentArray ? currentArray : null}`);
+      //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
       setDisplayButtons({ ...displayButtons, isDeleteByIndex: false });
     }

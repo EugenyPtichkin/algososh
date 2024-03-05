@@ -12,6 +12,9 @@ export const SortingPage: React.FC = () => {
   const [array, setArray] = useState<{ number: number, state: ElementStates }[]>([]);
   const [sortType, setSortType] = useState<string>('selection');
   const [isLoader, setIsLoader] = useState<boolean>(false);
+  const minIndex : number = 3;
+  const maxIndex : number  = 17;
+  const maxValue : number = 100;
 
   //сортировка выбором максимума/минимума с запоминанием его индекса
   const selectionSort = async (
@@ -154,7 +157,7 @@ export const SortingPage: React.FC = () => {
           style={{ minWidth: 158 }}
           disabled={false}
           isLoader={isLoader}
-          onClick={() => randomArr(3, 17, 100)} />
+          onClick={() => randomArr(minIndex, maxIndex, maxValue)} />
       </section>
 
       <ul className={styles.diagram}>

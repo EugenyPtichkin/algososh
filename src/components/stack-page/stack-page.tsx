@@ -79,7 +79,7 @@ export const StackPage: React.FC = () => {
           />
           <Button
             text="Удалить"
-            disabled={stack.getSize() === 0}
+            disabled={stack.size() === 0}
             onClick={() => deleteFromStack()}
             isLoader={isLoaderDelete} />
         </div>

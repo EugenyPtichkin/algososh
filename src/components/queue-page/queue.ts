@@ -23,8 +23,8 @@ export class Queue<T> implements IQueue<T> {
 
   enqueue = (item: T) => {
     if (this._length >= this.size) { //при превышении длины очереди
-      //throw new Error("Maximum length exceeded"); //вызвать ошибку
-      console.log("Maximum length exceeded");       //ничего не делать 
+      throw new Error("Maximum length exceeded"); //вызвать ошибку
+      //console.log("Maximum length exceeded");       //ничего не делать 
     } else {
       this.container[this._tail] = item;
       this._tail++;
@@ -34,8 +34,8 @@ export class Queue<T> implements IQueue<T> {
 
   dequeue = () => {
     if (this.isEmpty()) { //при считывании из пустой очереди
-      //throw new Error("No elements in the queue"); //вызвать ошибку
-      console.log("No elements in the queue");       //ничего не делать      
+      throw new Error("No elements in the queue"); //вызвать ошибку
+      //console.log("No elements in the queue");       //ничего не делать      
     } else {
       this.container[this._head] = null;            
       this._head++;
@@ -53,16 +53,16 @@ export class Queue<T> implements IQueue<T> {
 
   head = (): { item: T | null; index: number } => {
     if (this.isEmpty()) { //при считывании из пустой очереди
-      //throw new Error("No elements in the queue"); //вызвать ошибку
-      console.log("No elements in the queue");       //ничего не делать      
+      throw new Error("No elements in the queue"); //вызвать ошибку
+      //console.log("No elements in the queue");       //ничего не делать      
     }
     return { item: this.container[this._head], index: this._head };
   };
 
   tail = (): { item: T | null; index: number } => {
     if (this.isEmpty()) { //при считывании из пустой очереди
-      //throw new Error("No elements in the queue"); //вызвать ошибку
-      console.log("No elements in the queue");       //ничего не делать      
+      throw new Error("No elements in the queue"); //вызвать ошибку
+      //console.log("No elements in the queue");       //ничего не делать      
     }
     return { item: this.container[this._tail - 1], index: this._tail - 1 };
   };

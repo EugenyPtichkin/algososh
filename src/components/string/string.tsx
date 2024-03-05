@@ -14,7 +14,8 @@ export const StringComponent: React.FC = () => {
   const [isLoader, setIsLoader] = useState<boolean>(false);
   const [showString, setShowString] = useState<string>('');
   const [currentValue, setCurrentValue] = useState<number>(0);
-
+  const stringMaxLength : number = 11;
+  
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
     setInputString(e.target.value);
@@ -83,7 +84,7 @@ export const StringComponent: React.FC = () => {
   return (
     <SolutionLayout title="Строка" >
       <form className={styles.content} onSubmit={onSubmit}  >
-        <Input type="text" maxLength={11} isLimitText={true} onChange={onChange} value={inputString} />
+        <Input type="text" maxLength={stringMaxLength} isLimitText={true} onChange={onChange} value={inputString} />
         <Button text="Развернуть" disabled={!inputString} isLoader={isLoader} type='submit' />
       </form>
       <ul className={styles.outString}>

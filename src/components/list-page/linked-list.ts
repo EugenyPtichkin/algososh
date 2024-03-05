@@ -1,7 +1,7 @@
-export class Node<T> {
+export class LinkedListNode<T> {
   value: T
-  next: Node<T> | null
-  constructor(value: T, next?: Node<T> | null) {
+  next: LinkedListNode<T> | null
+  constructor(value: T, next?: LinkedListNode<T> | null) {
     this.value = value;
     this.next = (next === undefined ? null : next);
   }
@@ -10,32 +10,31 @@ export class Node<T> {
 interface ILinkedList<T> {
   append: (element: T) => void;
   prepend: (element: T) => void;
-  insertAt: (element: T, position: number) => void;
-  deleteAt: (position: number) => T | null;
+  addByIndex: (element: T, position: number) => void;
+  deleteByIndex: (position: number) => T | null;
   deleteHead: () => T | null;
   deleteTail: () => T | null;
   getSize: () => number;
-  print: () => void;
   toArray: () => T[];
 }
 
 export class LinkedList<T> implements ILinkedList<T> {
-  private head: Node<T> | null;
+  private head: LinkedListNode<T> | null;
   private size: number;
   constructor(initialState?: T[]) {
     this.head = null;
     this.size = 0;
     initialState?.forEach((item) => {
-      this.insertAt(item, 0)
+      this.addByIndex(item, 0)
     });
   }
 
-  insertAt(element: T, index: number) {
+  addByIndex(element: T, index: number) {
     if (index < 0 || index > this.size) {
-      console.log('Enter a valid index');
+      //console.log('Enter a valid index');
       return;
     } else {
-      const node = new Node(element);
+      const node = new LinkedListNode(element);
 
       // добавить элемент в начало списка
       if (index === 0) {
@@ -62,12 +61,12 @@ export class LinkedList<T> implements ILinkedList<T> {
     }
   }
 
-  deleteAt(index: number) {
+  deleteByIndex(index: number) {
     if (index < 0 || index > this.size) {
-      console.log('Enter a valid index');
+      //console.log('Enter a valid index');
       return null;
     }
-    let curr: Node<T> | null = this.head;
+    let curr: LinkedListNode<T> | null = this.head;
 
     if (index === 0 && curr) {// удалить элемент из начала списка
       this.head = curr.next;
@@ -76,7 +75,7 @@ export class LinkedList<T> implements ILinkedList<T> {
     }
 
     let currIndex: number = 0;
-    let prev: Node<T> | null = null;
+    let prev: LinkedListNode<T> | null = null;
     // перебрать элементы в списке до нужной позиции, запоминая предыдущий элемент
     while (curr && currIndex !== index) {
       prev = curr;
@@ -97,7 +96,7 @@ export class LinkedList<T> implements ILinkedList<T> {
     if (this.size === 0) { //если список пустой
       return null;
     }
-    let curr: Node<T> | null = this.head;
+    let curr: LinkedListNode<T> | null = this.head;
     if (curr && curr.next) { //если в списке есть следующий элемент
       this.head = curr.next;
     } else {
@@ -111,8 +110,8 @@ export class LinkedList<T> implements ILinkedList<T> {
     if (this.size === 0) { //если список пустой
       return null;
     }
-    let curr: Node<T> | null = this.head;
-    let prev: Node<T> | null = null;
+    let curr: LinkedListNode<T> | null = this.head;
+    let prev: LinkedListNode<T> | null = null;
     let currIndex: number = 0;
     // перебрать элементы в списке до последнего элемента, запоминая предыдущий элемент
     while (currIndex !== this.size - 1 && curr) {
@@ -132,7 +131,7 @@ export class LinkedList<T> implements ILinkedList<T> {
   }
 
   append(element: T) {
-    const node = new Node(element);
+    const node = new LinkedListNode(element);
     let current;
 
     if (this.head === null) { //пустой список
@@ -148,7 +147,7 @@ export class LinkedList<T> implements ILinkedList<T> {
   }
 
   prepend(element: T) {
-    const node = new Node(element);
+    const node = new LinkedListNode(element);
 
     if (this.head === null) { //пустой список
       this.head = node;
@@ -163,19 +162,9 @@ export class LinkedList<T> implements ILinkedList<T> {
     return this.size;
   }
 
-  print() { //отобразить в консоли значения всех ячеек списка
-    let curr: Node<T> | null = this.head;
-    let res: string = '';
-    while (curr) {
-      res += `${curr.value} `;
-      curr = curr.next;
-    }
-    console.log(res);
-  }
-
   toArray() { //отобразить в консоли значения всех ячеек списка
     let res: T[] = [];
-    let curr: Node<T> | null = this.head;
+    let curr: LinkedListNode<T> | null = this.head;
     while (curr) {
       res.push(curr.value);
       curr = curr.next;
