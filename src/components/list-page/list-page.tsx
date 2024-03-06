@@ -12,7 +12,7 @@ import { IListDisplay } from "./interfaceListDisplay";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
 import { getRandomNumber } from "../../utils/get-random-number";
 import { sleep } from "../../utils/sleep";
-import { useForm } from "../../hooks/useForm";
+//import { useForm } from "../../hooks/useForm";
 
 export const ListPage: React.FC = () => {
   const maxListLength: number = 10;
@@ -266,10 +266,6 @@ export const ListPage: React.FC = () => {
       }
      
       array.splice(Number(inputIndex), 1); //удалить найденный элемент из массива
-
-      setListArray([...array]); //применить изменения состояния очереди
-      await sleep(SHORT_DELAY_IN_MS);
-
       array.forEach((item) => item.state = ElementStates.Default);   //вернуть всем подкрашенным элементам стандартные цвета
       setListArray([...array]); //применить изменения состояния очереди
       await sleep(SHORT_DELAY_IN_MS);
