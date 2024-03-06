@@ -9,6 +9,7 @@ import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
 import { Stack } from "./stack";
 import { IStackDisplay } from "./interfaceStackDisplay";
+import { sleep } from "../../utils/sleep";
 
 export const StackPage: React.FC = () => {
   const [inputString, setInputString] = useState<string>('');
@@ -39,11 +40,11 @@ export const StackPage: React.FC = () => {
     if (lastElement) stackArray.push(lastElement); //записать в массив отображения
     //stackArray.push({ value: lastElement, state: ElementStates.Changing }); //записать в массив отображения
     setStackArray([...stackArray]);
-    await sleep();
+    await sleep(SHORT_DELAY_IN_MS);
     stackArray[stackArray.length - 1].state = ElementStates.Default; //изменить окраску на обычную
     setStackArray([...stackArray]);
     setIsLoaderAdd(false);
-    await sleep();    
+    await sleep(SHORT_DELAY_IN_MS);    
   }
 
   const deleteFromStack = async () => {
@@ -51,20 +52,17 @@ export const StackPage: React.FC = () => {
     stack.pop();
     stackArray[stackArray.length - 1].state = ElementStates.Changing; //изменить окраску у последнего элемента перед удалением
     setStackArray([...stackArray]);
-    await sleep();
+    await sleep(SHORT_DELAY_IN_MS);
     stackArray.pop(); 
     setStackArray([...stackArray]);
     setIsLoaderDelete(false);
-    await sleep();
+    await sleep(SHORT_DELAY_IN_MS);
   }
 
   const clearStack = () => {
     stack.clear();
     setStackArray([])    
   }
-
-  //функция-ожидание
-  const sleep = () => new Promise((resolve) => setTimeout(resolve, SHORT_DELAY_IN_MS));
 
   return (
     <SolutionLayout title="Стек" >

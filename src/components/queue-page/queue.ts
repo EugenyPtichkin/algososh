@@ -53,7 +53,7 @@ export class Queue<T> implements IQueue<T> {
 
   head = (): { item: T | null; index: number } => {
     if (this.isEmpty()) { //при считывании из пустой очереди
-      throw new Error("No elements in the queue"); //вызвать ошибку
+      //throw new Error("No elements in the queue"); //вызвать ошибку
       //console.log("No elements in the queue");       //ничего не делать      
     }
     return { item: this.container[this._head], index: this._head };
@@ -61,8 +61,8 @@ export class Queue<T> implements IQueue<T> {
 
   tail = (): { item: T | null; index: number } => {
     if (this.isEmpty()) { //при считывании из пустой очереди
-      throw new Error("No elements in the queue"); //вызвать ошибку
-      //console.log("No elements in the queue");       //ничего не делать      
+      //throw new Error("No elements in the queue"); //вызвать ошибку            
+      //console.log("No elements in the queue");       //ничего не делать  
     }
     return { item: this.container[this._tail - 1], index: this._tail - 1 };
   };

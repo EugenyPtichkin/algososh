@@ -5,6 +5,7 @@ import { Button } from "../ui/button/button";
 import styles from "./fibonacci-page.module.css";
 import { Circle } from "../ui/circle/circle";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
+import { sleep } from "../../utils/sleep";
 
 export const FibonacciPage: React.FC = () => {
 
@@ -40,21 +41,15 @@ export const FibonacciPage: React.FC = () => {
     return memo[n];
   };
 
-  //функция-ожидание
-  const sleep = () => new Promise((resolve) => setTimeout(resolve, SHORT_DELAY_IN_MS));
-
   //функция отображения во времени массива чисел фиббоначчи
   const showFibbonacci = async (n: number, memo: Record<number, number> = {}) => {
     let tmp: number = 1;
     let values: number[] = [];
     while (tmp <= n) {
       values[tmp] = memo[tmp];
-      //console.log(`tmp=${tmp}`);
-      //console.log(values);
-      //console.log(memo);
-      setOutValues(values);      
+      setOutValues(values);
       setCurrentValue(tmp); //сменить текущее состояние, чтобы отобразилось текущее состояние
-      await sleep();      
+      await sleep(SHORT_DELAY_IN_MS);      
       tmp++;      
     }
     setIsLoader(false);
@@ -63,7 +58,7 @@ export const FibonacciPage: React.FC = () => {
   return (
     <SolutionLayout title="Последовательность Фибоначчи">
       <form className={styles.content} onSubmit={onSubmit}  >
-        <Input type="text" maxLength={19} isLimitText={true} onChange={onChange} value={inputNumber} />
+        <Input type="number" maxLength={19} isLimitText={true} onChange={onChange} value={inputNumber} max={19}/>
         <Button text="Рассчитать" disabled={!inputNumber || inputNumber <= 0} isLoader={isLoader} type='submit' />
       </form>
       <ul className={styles.outString}>

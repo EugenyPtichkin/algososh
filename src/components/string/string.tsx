@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Circle } from "../ui/circle/circle";
 import { DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
+import { sleep } from "../../utils/sleep";
 
 export const StringComponent: React.FC = () => {
 
@@ -51,10 +52,7 @@ export const StringComponent: React.FC = () => {
       //console.log(`swapString=${swapString}`);
     }
   }
-  
-  //функция-ожидание
-  const sleep = () => new Promise((resolve) => setTimeout(resolve, DELAY_IN_MS));
-
+    
   //функция прокрутки во времени массива строк
   const reverseStr = async (inString: string) => {  
     let maxSwapValue : number = Math.floor(inString.length / 2) + 1;  
@@ -63,7 +61,7 @@ export const StringComponent: React.FC = () => {
     while (tmp < maxSwapValue) {
       currentString = swapString.shift() || '';
       setShowString(currentString);
-      await sleep();
+      await sleep(DELAY_IN_MS);
       tmp++;
       //console.log(`nextValue=${tmp} maxValue=${maxSwapValue}`);
       setCurrentValue(tmp);

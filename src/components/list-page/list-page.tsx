@@ -10,11 +10,13 @@ import { ElementStates } from "../../types/element-states";
 import { LinkedList } from "./linked-list";
 import { IListDisplay } from "./interfaceListDisplay";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
-import { getRandomNumber } from "./utils/get-random-number";
+import { getRandomNumber } from "../../utils/get-random-number";
+import { sleep } from "../../utils/sleep";
+import { useForm } from "../../hooks/useForm";
 
 export const ListPage: React.FC = () => {
   const maxListLength: number = 7;
-  const initialArray = useMemo(() => Array.from({length: 6}, () => `${getRandomNumber()}`), []);
+  const initialArray = useMemo(() => Array.from({length: 6}, () => `${getRandomNumber(100)}`), []);
   const [listArray, setListArray] = useState<IListDisplay[]>(initialArray.map((item, index) => {
     return {
       letter: item,
@@ -23,6 +25,11 @@ export const ListPage: React.FC = () => {
       tail: index === initialArray.length - 1 ? 'tail' : ''
     }
   }));
+
+//  const {values, handleChange, setValues} = useForm({});
+//  const {inputString, onChangeString, setInputString} = useForm({''}); 
+//  const {inputString, onChangeString, setInputString} = useForm({inputString}); 
+
   const [inputString, setInputString] = useState<string>('');
   const [inputIndex, setInputIndex] = useState<string>('');
   const list = useMemo(() => new LinkedList<string>(initialArray.reverse()), []);//сохранить list между рендерами!
@@ -35,8 +42,8 @@ export const ListPage: React.FC = () => {
       isDeleteHead: false,
       isDeleteTail: false
     });
-
-  const onChangeString = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  
+    const onChangeString = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
     setInputString(e.target.value);
   }
@@ -59,27 +66,27 @@ export const ListPage: React.FC = () => {
     setDisplayButtons({ ...displayButtons, isAddHead: true });
     const array: IListDisplay[] = [...listArray]; //вычитываем массив из состояния
     list.prepend(inputString);  //добавить в очередь в начало 
-    const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
+    //const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
     //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
     if (array.length > 0) {
       array[0] = { ...array[0], add: true, extra: inputString, head: '' }; //отобразить верхний элемент над первым
       setListArray([...array]); //применить изменения состояния очереди
-      await sleep();
+      await sleep(SHORT_DELAY_IN_MS);
       array[0] = { ...array[0], add: false, extra: undefined };//убрать отображение верхнего элемента над первым       
       array.unshift({ letter: inputString, state: ElementStates.Modified, head: 'head', tail: '' });//добавить вперед массива отображения с зеленым цветом
     } else { //особый случай - добавлен первый элемент
       array.unshift({ letter: '', state: ElementStates.Default, add: true, extra: inputString, head: '', tail: '' });
       setListArray([...array]); //применить изменения состояния очереди
-      await sleep();
+      await sleep(SHORT_DELAY_IN_MS);
       array[0] = { ...array[0], add: false, extra: undefined, letter: inputString, state: ElementStates.Modified, head: 'head', tail: 'tail' };
     }
     setListArray([...array]); //применить изменения состояния очереди
-    await sleep();
+    await sleep(SHORT_DELAY_IN_MS);
 
     array[0].state = ElementStates.Default; //вернуть штатную расцветку
     setListArray([...array]); //применить изменения состояния очереди
-    await sleep();
+    await sleep(SHORT_DELAY_IN_MS);
 
     setInputString(''); //обнулить ввод
     setDisplayButtons({ ...displayButtons, isAddHead: false });
@@ -95,30 +102,30 @@ export const ListPage: React.FC = () => {
     setDisplayButtons({ ...displayButtons, isAddTail: true });
     const array: IListDisplay[] = [...listArray]; //вычитываем массив из состояния
     list.append(inputString);  //добавить в конец очереди
-    const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
+    //const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
     //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
     if (array.length !== 0) { //при ненулевой длине очереди
       array[array.length - 1] = { ...array[array.length - 1], add: true, extra: inputString, head: '' }; //отобразить верхний элемент над последним
       setListArray([...array]); //применить изменения состояния очереди
-      await sleep();
+      await sleep(SHORT_DELAY_IN_MS);
       array[array.length - 1] = { ...array[array.length - 1], add: false, extra: undefined, tail: '' }; //убрать отображение верхнего элемента над первым 
       array.push({ letter: inputString, state: ElementStates.Modified, tail: 'tail', head: array.length === 0 ? 'head' : '' });//добавить назад массива отображения
     } else { //особый случай - очередь пуста
       array.push({ letter: '', state: ElementStates.Default, tail: '', head: '', add: true, extra: inputString });//сначала добавить пустой элемент массива      
       setListArray([...array]); //применить изменения состояния очереди
-      await sleep();
+      await sleep(SHORT_DELAY_IN_MS);
       array[0] = { ...array[0], add: false, extra: undefined, letter: inputString, state: ElementStates.Modified, tail: 'tail', head: 'head' };
     }
     if (array.length === 2) {
       array[0] = { ...array[0], head: 'head' }; //добавить head если добавлен второй элемент очереди (head удален выше)
     }
     setListArray([...array]); //применить изменения состояния очереди
-    await sleep();
+    await sleep(SHORT_DELAY_IN_MS);
 
     array[array.length - 1].state = ElementStates.Default; //вернуть штатную расцветку
     setListArray([...array]); //применить изменения состояния очереди
-    await sleep();
+    await sleep(SHORT_DELAY_IN_MS);
 
     setInputString(''); //обнулить ввод
     setDisplayButtons({ ...displayButtons, isAddTail: false });
@@ -133,16 +140,16 @@ export const ListPage: React.FC = () => {
 
     array[0] = { ...array[0], delete: true, extra: array[0].letter, letter: '', tail: '' }; //отобразить нижний элемент под первым, очистить значение
     setListArray([...array]); //применить изменения состояния очереди
-    await sleep();
+    await sleep(SHORT_DELAY_IN_MS);
 
     array[0] = { ...array[0], delete: false, extra: undefined }; //убрать отображение нижнего элемента под первым
     array.shift();                                             //удалить первый элемент массива отображения
     if (array.length !== 0) array[0] = { ...array[0], head: 'head' };//добавить надпись head при ненулевой длине очереди
     setListArray([...array]); //применить изменения состояния очереди
-    await sleep();
+    await sleep(SHORT_DELAY_IN_MS);
 
     list.deleteHead();  //удалить один элемент из начала очереди
-    const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
+    //const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
     //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
     setDisplayButtons({ ...displayButtons, isDeleteHead: false });
@@ -157,16 +164,16 @@ export const ListPage: React.FC = () => {
 
     array[array.length - 1] = { ...array[array.length - 1], delete: true, extra: array[array.length - 1].letter, letter: '', tail: '' }; //отобразить нижний элемент под первым, очистить значение
     setListArray([...array]); //применить изменения состояния очереди
-    await sleep();
+    await sleep(SHORT_DELAY_IN_MS);
 
     array[array.length - 1] = { ...array[array.length - 1], delete: false, extra: undefined }; //убрать отображение нижнего элемента под первым
     array.pop();                                                                         //удалить последний элемент массива отображения
     if (array.length !== 0) array[array.length - 1] = { ...array[array.length - 1], tail: 'tail' };//добавить надпись tail при ненулевой длине очереди
     setListArray([...array]); //применить изменения состояния очереди
-    await sleep();
+    await sleep(SHORT_DELAY_IN_MS);
 
     list.deleteTail();  //удалить один элемент из конца очереди
-    const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
+    //const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
     //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
     setDisplayButtons({ ...displayButtons, isDeleteTail: false });
@@ -179,17 +186,17 @@ export const ListPage: React.FC = () => {
       return;
     }
     
-    if (Number(inputIndex) < 0 || Number(inputIndex) > list.getSize() - 1) {//при некорректном индексе вывести сообщение в лог       
+    if (Number(inputIndex) < 0 || Number(inputIndex) > list.getSize() - 1) {//при некорректном индексе вывести сообщение в лог и ничего не делать
       //console.log(`Запрашиваемый индекс ${inputIndex} вне диапазона {0...${list.getSize() - 1}}`);
-      if (!((Number(inputIndex) === 0) && (list.getSize() === 0))) { //но пропустить ситуацию при нулевом индексе и пустом списке 
+      if (!((Number(inputIndex) === 0) && (list.getSize() === 0))) { //но пропустить ситуацию при нулевом индексе и пустом списке
         return;
       }      
     }
     setDisplayButtons({ ...displayButtons, isAddByIndex: true });
 
-    const array: IListDisplay[] = [...listArray];    //вычитываем массив из состояния
+    const array: IListDisplay[] = [...listArray];      //вычитываем массив из состояния
     list.addByIndex(inputString, Number(inputIndex));  //добавить в очередь по указанному индексу
-    const currentArray: string[] = list.toArray();   //контроль текущего состояния очереди
+    //const currentArray: string[] = list.toArray();   //контроль текущего состояния очереди
     //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
     if (array.length > 0) {
       for (let i: number = 0; i <= Number(inputIndex); i++) {
@@ -201,26 +208,26 @@ export const ListPage: React.FC = () => {
           array[i - 1] = { ...array[i - 1], head: 'head' }; //вернуть удаленную метку head верхним элементом если он не первый
         }
         setListArray([...array]); //применить изменения состояния очереди
-        await sleep();
+        await sleep(SHORT_DELAY_IN_MS);
       }
       array[Number(inputIndex)] = { ...array[Number(inputIndex)], add: false, extra: undefined }; //убрать отображение верхнего элемента над вставляемым элементом
       array.forEach((item) => item.state = ElementStates.Default);   //вернуть всем подкрашенным элементам стандартные цвета
       array.splice(Number(inputIndex), 0, { letter: inputString, state: ElementStates.Modified }); //вставить на выбранное место новый элемент, окрасить зеленым      
       array[0] = { ...array[0], head: 'head' }; //вернуть удаленную метку head верхним элементом если он первый      
       setListArray([...array]); //применить изменения состояния очереди
-      await sleep();
+      await sleep(SHORT_DELAY_IN_MS);
       array[Number(inputIndex)] = { ...array[Number(inputIndex)], state: ElementStates.Default }; //вернуть вновь вставленному элементу стандартные цвета      
     } else { //особый случай - добавлен элемент в пустой список
       array.push({ letter: '', state: ElementStates.Default, add: true, extra: inputString, head: '', tail: '' });
       setListArray([...array]); //применить изменения состояния очереди
-      await sleep();
+      await sleep(SHORT_DELAY_IN_MS);
       array[0] = { ...array[0], add: false, extra: undefined, letter: inputString, state: ElementStates.Modified, head: 'head', tail: 'tail' };
       setListArray([...array]); //применить изменения состояния очереди
-      await sleep();
+      await sleep(SHORT_DELAY_IN_MS);
       array[0].state = ElementStates.Default; //вернуть штатную расцветку
     }
     setListArray([...array]); //применить изменения состояния очереди
-    await sleep();
+    await sleep(SHORT_DELAY_IN_MS);
 
     setInputString(''); //обнулить ввод
     setDisplayButtons({ ...displayButtons, isAddByIndex: false });
@@ -230,23 +237,23 @@ export const ListPage: React.FC = () => {
   /*    Удаление элемента по указанному индексу      */
   /*-------------------------------------------------*/
   const deleteByIndex = async (inputIndex: string) => {
-    if ((Number(inputIndex) < 0) || (Number(inputIndex) > (list.getSize() - 1))) { //при некорректном индексе вывести сообщение в лог
-      //console.log(`Запрашиваемый индекс ${inputIndex} вне диапазона {0...${list.getSize() - 1}}`)
-      return;
-    } else {
-
+    //if ((Number(inputIndex) < 0) || (Number(inputIndex) > (list.getSize() - 1))) { //при некорректном индексе вывести сообщение в лог и ничего не делать
+    //console.log(`Запрашиваемый индекс ${inputIndex} вне диапазона {0...${list.getSize() - 1}}`)
+    //  return;
+    //} else 
+    {
       setDisplayButtons({ ...displayButtons, isDeleteByIndex: true });
       const array: IListDisplay[] = [...listArray]; //вычитываем массив из состояния
 
       for (let i: number = 0; i <= Number(inputIndex); i++) {
         array[i] = { ...array[i], state: ElementStates.Changing }; //закрашиваем пройденные элементы
         setListArray([...array]); //применить изменения состояния очереди
-        await sleep();
+        await sleep(SHORT_DELAY_IN_MS);
       }
       //отобразить нижний элемент под удаляемым, очистить значение
       array[Number(inputIndex)] = { ...array[Number(inputIndex)], delete: true, extra: array[Number(inputIndex)].letter, letter: '', tail: '' };
       setListArray([...array]); //применить изменения состояния очереди
-      await sleep();
+      await sleep(SHORT_DELAY_IN_MS);
 
       array[Number(inputIndex)] = { ...array[Number(inputIndex)], delete: false, extra: undefined }; //убрать отображение нижнего элемента под удаляемым
       
@@ -261,22 +268,19 @@ export const ListPage: React.FC = () => {
       array.splice(Number(inputIndex), 1); //удалить найденный элемент из массива
 
       setListArray([...array]); //применить изменения состояния очереди
-      await sleep();
+      await sleep(SHORT_DELAY_IN_MS);
 
       array.forEach((item) => item.state = ElementStates.Default);   //вернуть всем подкрашенным элементам стандартные цвета
       setListArray([...array]); //применить изменения состояния очереди
-      await sleep();
+      await sleep(SHORT_DELAY_IN_MS);
 
       list.deleteByIndex(Number(inputIndex));  //удалить по индексу (учитывая что первый нулевой)
-      const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
+      //const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
       //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
       setDisplayButtons({ ...displayButtons, isDeleteByIndex: false });
     }
   }
-
-  //функция-ожидание
-  const sleep = () => new Promise((resolve) => setTimeout(resolve, SHORT_DELAY_IN_MS));
 
   return (
     <SolutionLayout title="Связный список">
@@ -321,7 +325,7 @@ export const ListPage: React.FC = () => {
         </div>
         <div className={styles.indexes}>
           <Input
-            min={0}
+            //min ={0} //тоже блокирует ввод!
             max={list.getSize() >= 1 ? list.getSize() - 1 : 0}
             type="number"
             isLimitText={false}
@@ -331,14 +335,14 @@ export const ListPage: React.FC = () => {
           />
           <Button
             text="Добавить по индексу"
-            disabled={list.getSize() === maxListLength}
+            disabled={list.getSize() === maxListLength || Number(inputIndex) < 0 || Number(inputIndex) > list.getSize() - 1}
             onClick={() => addByIndex(inputIndex)}
             isLoader={displayButtons.isAddByIndex}
             style={{ width: 362 }}
           />
           <Button
             text="Удалить по индексу"
-            disabled={list.getSize() === 0}
+            disabled={list.getSize() === 0 || Number(inputIndex) < 0 || Number(inputIndex) > list.getSize() - 1}
             onClick={() => deleteByIndex(inputIndex)}
             isLoader={displayButtons.isDeleteByIndex}
             style={{ width: 362 }}
