@@ -15,7 +15,7 @@ import { sleep } from "../../utils/sleep";
 import { useForm } from "../../hooks/useForm";
 
 export const ListPage: React.FC = () => {
-  const maxListLength: number = 7;
+  const maxListLength: number = 10;
   const initialArray = useMemo(() => Array.from({length: 6}, () => `${getRandomNumber(100)}`), []);
   const [listArray, setListArray] = useState<IListDisplay[]>(initialArray.map((item, index) => {
     return {
