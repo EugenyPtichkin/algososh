@@ -63,6 +63,7 @@ export const ListPage: React.FC = () => {
     setDisplayButtons({ ...displayButtons, isAddHead: true });
     const array: IListDisplay[] = [...listArray]; //вычитываем массив из состояния
     list.prepend(values.inputString);  //добавить в очередь в начало 
+    setValues({...values, inputString: ''});  //обнулить ввод
     //const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
     //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
@@ -85,8 +86,6 @@ export const ListPage: React.FC = () => {
     setListArray([...array]); //применить изменения состояния очереди
     await sleep(SHORT_DELAY_IN_MS);
 
-    //setInputString(''); //обнулить ввод
-    setValues({...values, inputString: ''})
     setDisplayButtons({ ...displayButtons, isAddHead: false });
   }
 
@@ -100,6 +99,7 @@ export const ListPage: React.FC = () => {
     setDisplayButtons({ ...displayButtons, isAddTail: true });
     const array: IListDisplay[] = [...listArray]; //вычитываем массив из состояния
     list.append(values.inputString);  //добавить в конец очереди
+    setValues({...values, inputString: ''});  //обнулить ввод
     //const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
     //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
@@ -125,8 +125,6 @@ export const ListPage: React.FC = () => {
     setListArray([...array]); //применить изменения состояния очереди
     await sleep(SHORT_DELAY_IN_MS);
 
-    //setInputString(''); //обнулить ввод
-    setValues({...values, inputString: ''})
     setDisplayButtons({ ...displayButtons, isAddTail: false });
   }
 
@@ -195,6 +193,7 @@ export const ListPage: React.FC = () => {
 
     const array: IListDisplay[] = [...listArray];      //вычитываем массив из состояния
     list.addByIndex(values.inputString, Number(inputIndex));  //добавить в очередь по указанному индексу
+    setValues({...values, inputString: '', inputIndex: ''});  //обнулить ввод
     //const currentArray: string[] = list.toArray();   //контроль текущего состояния очереди
     //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
     if (array.length > 0) {
@@ -227,9 +226,7 @@ export const ListPage: React.FC = () => {
     }
     setListArray([...array]); //применить изменения состояния очереди
     await sleep(SHORT_DELAY_IN_MS);
-
-    //setInputString(''); //обнулить ввод
-    setValues({...values, inputString: ''})
+    
     setDisplayButtons({ ...displayButtons, isAddByIndex: false });
   }
 
@@ -271,6 +268,7 @@ export const ListPage: React.FC = () => {
       await sleep(SHORT_DELAY_IN_MS);
 
       list.deleteByIndex(Number(inputIndex));  //удалить по индексу (учитывая что первый нулевой)
+      setValues({...values, inputString: '', inputIndex: ''});  //обнулить ввод
       //const currentArray: string[] = list.toArray(); //контроль текущего состояния очереди
       //console.log(`list of nodes= ${currentArray ? currentArray : null}`);
 
@@ -286,8 +284,6 @@ export const ListPage: React.FC = () => {
             type="text"
             maxLength={4}
             isLimitText={true}
-            //onChange={onChangeString}
-            //value={inputString}
             onChange={handleChange}
             name={'inputString'}
             value={values.inputString}
@@ -295,14 +291,14 @@ export const ListPage: React.FC = () => {
           />
           <Button
             text="Добавить в head"
-            disabled={list.getSize() === maxListLength}
+            disabled={list.getSize() === maxListLength || !values.inputString}
             onClick={() => addToHead()}
             isLoader={displayButtons.isAddHead}
             style={{ width: 175 }}
           />
           <Button
             text="Добавить в tail"
-            disabled={list.getSize() === maxListLength}
+            disabled={list.getSize() === maxListLength || !values.inputString}
             onClick={() => addToTail()}
             isLoader={displayButtons.isAddTail}
             style={{ width: 175 }}
@@ -324,27 +320,25 @@ export const ListPage: React.FC = () => {
         </div>
         <div className={styles.indexes}>
           <Input
-            min ={0} //тоже блокирует ввод!
+            //min ={0} //тоже блокирует ввод!
             max={list.getSize() >= 1 ? list.getSize() - 1 : 0}
             type="number"
-            isLimitText={false}
-            //onChange={onChangeIndex}
-            //value={inputIndex}
+            isLimitText={false}            
             onChange={handleChange}
             name={'inputIndex'}
             value={values.inputIndex}
             style={{ width: 204 }}
           />
           <Button
-            text="Добавить по индексу"
-            disabled={list.getSize() === maxListLength || Number(values.inputIndex) < 0 || Number(values.inputIndex) > list.getSize() - 1}
+            text="Добавить по индексу"            
+            disabled={list.getSize() === maxListLength || !values.inputString || !values.inputIndex || Number(values.inputIndex) < 0 || Number(values.inputIndex) > list.getSize() - 1}
             onClick={() => addByIndex(values.inputIndex)}
             isLoader={displayButtons.isAddByIndex}
             style={{ width: 362 }}
           />
           <Button
             text="Удалить по индексу"
-            disabled={list.getSize() === 0 || Number(values.inputIndex) < 0 || Number(values.inputIndex) > list.getSize() - 1}
+            disabled={list.getSize() === 0 || !values.inputIndex || Number(values.inputIndex) < 0 || Number(values.inputIndex) > list.getSize() - 1}
             onClick={() => deleteByIndex(values.inputIndex)}
             isLoader={displayButtons.isDeleteByIndex}
             style={{ width: 362 }}

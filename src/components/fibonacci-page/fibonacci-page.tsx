@@ -8,7 +8,7 @@ import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { sleep } from "../../utils/sleep";
 
 export const FibonacciPage: React.FC = () => {
-
+  const maxValue : number = 19;
   const [inputNumber, setInputNumber] = useState<number>(0);
   const [isLoader, setIsLoader] = useState<boolean>(false);
   const [outValues, setOutValues] = useState<number[]>([]);
@@ -60,15 +60,15 @@ export const FibonacciPage: React.FC = () => {
       <form className={styles.content} onSubmit={onSubmit}  >
         <Input
           type="number"
-          maxLength={19}
+          maxLength={maxValue}
           isLimitText={true}
           onChange={onChange}
           value={inputNumber}
-          min={0} //тоже блокирует ввод отрицательных!
-          max={19} />
+          //min={0} //тоже блокирует ввод отрицательных!
+          max={maxValue} />
         <Button
           text="Рассчитать"
-          disabled={ inputNumber < 0} //{!inputNumber || inputNumber <= 0} //можно расчитывать нулевой элемент
+          disabled={!inputNumber || inputNumber < 0 || inputNumber > maxValue}
           isLoader={isLoader}
           type='submit' />
       </form>

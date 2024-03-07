@@ -71,20 +71,20 @@ export const StackPage: React.FC = () => {
         <div className={styles.buttons} >
           <Button
             text="Добавить"
-            disabled={false}
+            disabled={!inputString}
             onClick={() => addToStack()}
             isLoader={isLoaderAdd}
           />
           <Button
             text="Удалить"
-            disabled={stack.size() === 0}
+            disabled={stackArray.length === 0}
             onClick={() => deleteFromStack()}
             isLoader={isLoaderDelete} />
         </div>
         <div className={styles.clearbutton} >
           <Button
             text="Очистить"
-            disabled={false}
+            disabled={stackArray.length === 0}
             onClick={() => clearStack()}
           />
         </div>

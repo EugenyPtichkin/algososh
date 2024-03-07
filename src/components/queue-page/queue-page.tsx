@@ -32,9 +32,11 @@ export const QueuePage: React.FC = () => {
   }
 
   const addToQueue = async () => {
-    if (!inputString) {
+    if (!inputString || (queue.tail().index === queueLength - 1 ) || (queue.head().index === queueLength )) {
       return; //ничего не делать при пустой строке, но не тушить кнопку "Добавить"
+      // также ничего не делать, когда указатель head за строкой или указатель tail на конце строки
     }
+    
 
     setIsLoaderAdd(true);
     queue.enqueue(inputString);
@@ -113,7 +115,7 @@ export const QueuePage: React.FC = () => {
         <div className={styles.buttons} >
           <Button
             text="Добавить"
-            disabled={(queue.tail().index === queueLength - 1 ) || (queue.head().index === queueLength ) ? true : false} /*притушить при когда добавлять некуда*/
+            disabled={!inputString} /*притушить при когда добавлять некуда*/  //(queue.tail().index === queueLength - 1 ) || (queue.head().index === queueLength )   ? true : false
             onClick={() => addToQueue()}
             isLoader={isLoaderAdd}
           />

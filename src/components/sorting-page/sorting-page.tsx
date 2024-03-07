@@ -6,7 +6,7 @@ import { Column } from "../ui/column/column";
 import { ElementStates } from "../../types/element-states";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import { Direction } from "../../types/direction";
-import { DELAY_IN_MS } from "../../constants/delays";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { sleep } from "../../utils/sleep";
 import { getRandomNumber } from "../../utils/get-random-number";
 import { ISortDisplay } from "./interfaceSortDisplay";
@@ -52,7 +52,7 @@ export const SortingPage: React.FC = () => {
       for (let j: number = i + 1; j < array.length; j++) {
         array[j].state = ElementStates.Changing;
         changeArray([...array]);//отобразить подсветку изменения
-        await sleep(DELAY_IN_MS);
+        await sleep(SHORT_DELAY_IN_MS);
         if (((sortDirection === 'ascending') && (array[j].number! < value)) ||  // сортируем элементы по возрастанию 
           ((sortDirection === 'descending') && (array[j].number! > value))) {   // сортируем элементы по убыванию
           value = array[j].number!;     //находим минимум/максимум, сдвигаем к началу
@@ -62,7 +62,7 @@ export const SortingPage: React.FC = () => {
             array[index].number = array[i].number;
             array[i].number = value;
             changeArray([...array]);
-            await sleep(DELAY_IN_MS);
+            await sleep(SHORT_DELAY_IN_MS);
           }
         }
         array[j].state = ElementStates.Default;
@@ -103,7 +103,7 @@ export const SortingPage: React.FC = () => {
           array[j + 1].number = swap;
         }
         changeArray([...array]);
-        await sleep(DELAY_IN_MS);
+        await sleep(SHORT_DELAY_IN_MS);
         array[j].state = ElementStates.Default;
       }
       array[array.length - 1 - i].state = ElementStates.Modified;
@@ -116,7 +116,7 @@ export const SortingPage: React.FC = () => {
     const newArray: { number: number, state: ElementStates }[] = [];
     const lengthArray: number = getRandomNumber(maxLen - minLen) + minLen;
     setDisplayButtons({ ...displayButtons, isNewArray: true });
-    await sleep(DELAY_IN_MS);
+    
     for (let i: number = 0; i < lengthArray; i++) {
       newArray.push({
         number: getRandomNumber(maxValue),
@@ -124,6 +124,7 @@ export const SortingPage: React.FC = () => {
       });
     }
     setArray(newArray);
+    await sleep(SHORT_DELAY_IN_MS);
     setDisplayButtons({ ...displayButtons, isNewArray: false });
     return;
   }
