@@ -321,7 +321,7 @@ export const ListPage: React.FC = () => {
         </div>
         <div className={styles.indexes}>
           <Input
-            //min ={0} //тоже блокирует ввод!
+            min ={0} //тоже блокирует ввод!
             max={list.getSize() >= 1 ? list.getSize() - 1 : 0}
             type="number"
             isLimitText={false}

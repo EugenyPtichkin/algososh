@@ -24,8 +24,8 @@ export const FibonacciPage: React.FC = () => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoader(true);
-    calcFibbonacci(inputNumber+1, memo); //вычисление
-    showFibbonacci(inputNumber+1, memo); //отображение
+    calcFibbonacci(inputNumber + 1, memo); //вычисление
+    showFibbonacci(inputNumber + 1, memo); //отображение
   }
 
   const calcFibbonacci = (n: number, memo: Record<number, number>): number => {
@@ -49,8 +49,8 @@ export const FibonacciPage: React.FC = () => {
       values[tmp] = memo[tmp];
       setOutValues(values);
       setCurrentValue(tmp); //сменить текущее состояние, чтобы отобразилось текущее состояние
-      await sleep(SHORT_DELAY_IN_MS);      
-      tmp++;      
+      await sleep(SHORT_DELAY_IN_MS);
+      tmp++;
     }
     setIsLoader(false);
   }
@@ -58,13 +58,24 @@ export const FibonacciPage: React.FC = () => {
   return (
     <SolutionLayout title="Последовательность Фибоначчи">
       <form className={styles.content} onSubmit={onSubmit}  >
-        <Input type="number" maxLength={19} isLimitText={true} onChange={onChange} value={inputNumber} max={19}/>
-        <Button text="Рассчитать" disabled={!inputNumber || inputNumber <= 0} isLoader={isLoader} type='submit' />
+        <Input
+          type="number"
+          maxLength={19}
+          isLimitText={true}
+          onChange={onChange}
+          value={inputNumber}
+          min={0} //тоже блокирует ввод отрицательных!
+          max={19} />
+        <Button
+          text="Рассчитать"
+          disabled={ inputNumber < 0} //{!inputNumber || inputNumber <= 0} //можно расчитывать нулевой элемент
+          isLoader={isLoader}
+          type='submit' />
       </form>
       <ul className={styles.outString}>
         {outValues.map((value, index) => (
           <li key={index}>
-            {<Circle letter={value.toString()} index={index-1}/>  }
+            {<Circle letter={value.toString()} index={index - 1} />}
           </li>))}
       </ul>
     </SolutionLayout>
