@@ -1,0 +1,49 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 952px;
+  margin: 0 auto;
+}
+
+.headtail {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 12px;
+}
+
+.indexes {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 12px;
+}
+
+.outString {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  column-gap: 16px;
+  padding: 80px 0px 0px 0px;  
+  list-style-type: none;
+}
+
+.elementsArrows {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.top {
+  position: absolute;
+  top: -70px;
+  left: 13px;
+}
+
+.bottom {
+  position: absolute;
+  top: 120px;
+  left: 13px;
+}

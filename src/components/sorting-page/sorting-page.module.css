@@ -1,0 +1,29 @@
+.content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 924px;
+  margin: 0 auto;
+}
+
+.radio {
+ display: flex;
+ width: 221px;
+ column-gap: 40px; 
+}
+
+.buttons {
+  display: flex;
+  column-gap: 12px; 
+}
+
+.diagram {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+  column-gap: 10px;
+  padding-top: 40px;
+  list-style-type: none;
+}
