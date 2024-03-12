@@ -34,7 +34,8 @@ export const StringComponent: React.FC = () => {
   
   const invertString = (inString: string) => {
     swapString = [];
-    let symbols: string[] = new Array;
+    let symbols: Array<string> = [];
+
     symbols = Array.from(inString);  //преобразовать строку в символы
 
     swapString.push(symbols.join(''));
