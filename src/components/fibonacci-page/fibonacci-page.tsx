@@ -12,6 +12,7 @@ export const FibonacciPage: React.FC = () => {
   const [inputNumber, setInputNumber] = useState<number>(0);
   const [isLoader, setIsLoader] = useState<boolean>(false);
   const [outValues, setOutValues] = useState<number[]>([]);
+  // eslint-disable-next-line
   const [currentValue, setCurrentValue] = useState<number>(0);
 
   const memo: Record<number, number> = {};
