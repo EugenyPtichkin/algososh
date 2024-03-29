@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`button tests button test disabled 1`] = `
+<button
+  class="text text_type_button text_color_primary button undefined false "
+  disabled=""
+  type="button"
+>
+  <p
+    class="text undefined"
+  />
+</button>
+`;
+
+exports[`button tests button test disabled 2`] = `
+<button
+  class="text text_type_button text_color_primary button undefined loader "
+  disabled=""
+  type="button"
+>
+  <img
+    alt="Загрузка."
+    class="loader_icon"
+    src="loader.svg"
+  />
+</button>
+`;
+
+exports[`button tests button test with text 1`] = `
+<button
+  class="text text_type_button text_color_primary button undefined false "
+  type="button"
+>
+  <p
+    class="text undefined"
+  >
+    TestButton
+  </p>
+</button>
+`;
+
+exports[`button tests button test without text 1`] = `
+<button
+  class="text text_type_button text_color_primary button undefined false "
+  type="button"
+>
+  <p
+    class="text undefined"
+  />
+</button>
+`;
