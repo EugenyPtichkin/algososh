@@ -18,7 +18,7 @@ describe('String tests', () => {
     it('check invertString function with length = 1', () => {
       expect(invertString('1')).toEqual(testStringsOne);
     });
-
+    
     it('check invertString function with length = 0', () => {
         expect(invertString('')).toEqual(testStringZero);
     });
