@@ -7,7 +7,7 @@ describe('string reverse test for length of 1-6 only', function () {
 
   it('button should be disabled with empty input', () => {
     cy.get('input').should('have.value', '');
-    cy.get('button').should('be.disabled');
+    cy.get('button').eq(1).should('be.disabled');
   });
 
   it('should reverse string', () => {
