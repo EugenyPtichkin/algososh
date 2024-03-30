@@ -5,7 +5,7 @@ describe('string reverse test for length of 1-6 only', function () {
     cy.visit('http://localhost:3000/recursion');
   });
 
-  it('button is disabled with empty input', () => {
+  it('button should be disabled with empty input', () => {
     cy.get('input').should('have.value', '');
     cy.get('button').should('be.disabled');
   });
