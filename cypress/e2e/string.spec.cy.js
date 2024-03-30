@@ -12,8 +12,7 @@ describe('string reverse test for length of 1-6 only', function () {
 
   it('should reverse string', () => {
     cy.get('input').type(testString);
-    cy.get('button').contains('Развернуть').click();
-  
+    cy.get('button').contains('Развернуть').click();  
     //состояние до переворота
     cy.get('[class*=circle_content]')
       .should('have.length', testString.length)
@@ -24,8 +23,7 @@ describe('string reverse test for length of 1-6 only', function () {
         } else {
           cy.wrap(el).find('[class*=circle_default]');
         }
-      });
-      
+      });      
       //состояние после второго переворота
       cy.get('[class*=circle_content]')
       .each((el, index) => {
@@ -41,7 +39,6 @@ describe('string reverse test for length of 1-6 only', function () {
           }
         }
       });
-
       //состояние после третьего переворота
       cy.get('[class*=circle_content]')
       .each((el, index) => {
@@ -53,14 +50,11 @@ describe('string reverse test for length of 1-6 only', function () {
             cy.wrap(el).find('[class*=circle_changing]');
          }
       });
-
       //состояние окончательное
       cy.get('[class*=circle_content]')
       .each((el, index) => {
         cy.wrap(el).contains(testString[testString.length - 1 - index]);
         cy.wrap(el).find('[class*=circle_modified]');
       });
-
   });
-
 });

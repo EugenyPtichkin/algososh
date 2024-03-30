@@ -1,4 +1,4 @@
-import { SHORT_DELAY_IN_MS } from "./../../src/constants/delays";
+import { SHORT_DELAY_IN_MS } from "../../src/constants/delays";
 
 describe('queue test', function () {
 

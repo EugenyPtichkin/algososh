@@ -1,4 +1,4 @@
-import { SHORT_DELAY_IN_MS } from "./../../src/constants/delays";
+import { SHORT_DELAY_IN_MS } from "../../src/constants/delays";
 
 describe('stack test', function () {
 
@@ -46,6 +46,20 @@ describe('stack test', function () {
       .each((el, index) => {
         cy.wrap(el).get('[class*=circle_index]').contains(index);
         if (index === 2) {
+          cy.wrap(el).get('[class*=circle_string]').contains('top');
+          cy.wrap(el).find('[class*=circle_changing]');
+        } else {
+          cy.wrap(el).find('[class*=circle_default]');
+        }
+      });
+    //добавить 4й элемент
+    cy.get('input').clear().type('4444');
+    cy.get('button').contains('Добавить').click();
+    cy.get('[class*=circle_content]')
+      .should('have.length', '4')
+      .each((el, index) => {
+        cy.wrap(el).get('[class*=circle_index]').contains(index);
+        if (index === 3) {
           cy.wrap(el).get('[class*=circle_string]').contains('top');
           cy.wrap(el).find('[class*=circle_changing]');
         } else {
@@ -159,7 +173,4 @@ describe('stack test', function () {
     cy.get('button').contains('Очистить').click();
     cy.get('[class*=circle_content]').should('have.length', '0')
   });
-
 });
-
-
