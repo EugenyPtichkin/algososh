@@ -23,7 +23,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "cypress:open": "cypress open"
   },
   "eslintConfig": {
     "extends": [
@@ -47,7 +48,14 @@
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
     "@types/react-router-dom": "^5.3.3",
-    "gh-pages": "^6.1.1"
+    "@types/react-test-renderer": "^18.0.7",
+    "cypress": "^13.7.1",
+    "eslint-plugin-cypress": "^2.15.1",
+    "fetch-mock": "^9.11.0",
+    "gh-pages": "^6.1.1",
+    "jest": "^27.5.1",
+    "react-test-renderer": "^17.0.2",
+    "redux-mock-store": "^1.5.4"
   },
   "homepage": "./",
   "description": "В проектной работе мы предлагаем вам написать визуализатор алгоритмов, которые вы будете изучать в течение месяца. Эта проектная работа заточена на анимацию и поэтапное отображение работы алгоритма, что позволит вам детальнее понять каждый шаг его работы.",
