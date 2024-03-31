@@ -18,10 +18,13 @@ describe('queue test', function () {
   });
 
   it('should add the new element correctly', () => {
+    //cy.get('[class*=circle_content]').as('circleContentClass');
+    //cy.get('[class*=circle_default]').as('circleDefaultClass');
+    //cy.get('[class*=circle_changing]').as('circleChangingClass');
     //добавить 1й элемент
     cy.get('input').clear().type('1111');
     cy.get('button').contains('Добавить').click();
-    cy.get(circleContentClass).first().as('firstElement');
+    cy.get(circleContentClass).first().as('firstElement');    
     cy.get('@firstElement').children(circleChangingClass);
     cy.get('@firstElement').contains('1111');
     cy.get('@firstElement').contains('head');
@@ -73,7 +76,6 @@ describe('queue test', function () {
         }
       });
 
-
     //добавить 4й элемент    
     cy.get('input').type('4444');
     cy.get('button').contains('Добавить').click();
@@ -106,7 +108,7 @@ describe('queue test', function () {
   });
 
   it('should delete elements from queue correctly', () => {
-    //добавить 4 элемента
+   //добавить 4 элемента
     cy.get('input').clear().type('111');
     cy.get('button').contains('Добавить').click();
     cy.get('input').clear().type('222');
