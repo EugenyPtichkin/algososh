@@ -1,9 +1,16 @@
 import { SHORT_DELAY_IN_MS } from "../../src/constants/delays";
+import {
+  circleContentClass,
+  circleDefaultClass,
+  circleChangingClass,
+  circleIndexClass,
+  circleStringClass
+} from './../../src/constants/selectors';
 
 describe('stack test', function () {
 
   beforeEach('stack algorithm should be available', function () {
-    cy.visit('http://localhost:3000/stack');
+    cy.visit('stack');
   });
 
   it('add button should be disabled with empty input', () => {
@@ -15,61 +22,61 @@ describe('stack test', function () {
     //добавить 1й элемент
     cy.get('input').clear().type('1111');
     cy.get('button').contains('Добавить').click();
-    cy.get('[class*=circle_content]')
+    cy.get(circleContentClass)
       .should('have.length', '1')
       .each((el, index) => {
-        cy.wrap(el).get('[class*=circle_index]').contains(index);
+        cy.wrap(el).get(circleIndexClass).contains(index);
         if (index === 0) {
-          cy.wrap(el).get('[class*=circle_string]').contains('top');
-          cy.wrap(el).find('[class*=circle_changing]');
+          cy.wrap(el).get(circleStringClass).contains('top');
+          cy.wrap(el).find(circleChangingClass);
         }
       });
     //добавить 2й элемент
     cy.get('input').clear().type('2222');
     cy.get('button').contains('Добавить').click();
-    cy.get('[class*=circle_content]')
+    cy.get(circleContentClass)
       .should('have.length', '2')
       .each((el, index) => {
-        cy.wrap(el).get('[class*=circle_index]').contains(index);
+        cy.wrap(el).get(circleIndexClass).contains(index);
         if (index === 1) {
-          cy.wrap(el).get('[class*=circle_string]').contains('top');
-          cy.wrap(el).find('[class*=circle_changing]');
+          cy.wrap(el).get(circleStringClass).contains('top');
+          cy.wrap(el).find(circleChangingClass);
         } else {
-          cy.wrap(el).find('[class*=circle_default]');
+          cy.wrap(el).find(circleDefaultClass);
         }
       });
     //добавить 3й элемент
     cy.get('input').clear().type('3333');
     cy.get('button').contains('Добавить').click();
-    cy.get('[class*=circle_content]')
+    cy.get(circleContentClass)
       .should('have.length', '3')
       .each((el, index) => {
-        cy.wrap(el).get('[class*=circle_index]').contains(index);
+        cy.wrap(el).get(circleIndexClass).contains(index);
         if (index === 2) {
-          cy.wrap(el).get('[class*=circle_string]').contains('top');
-          cy.wrap(el).find('[class*=circle_changing]');
+          cy.wrap(el).get(circleStringClass).contains('top');
+          cy.wrap(el).find(circleChangingClass);
         } else {
-          cy.wrap(el).find('[class*=circle_default]');
+          cy.wrap(el).find(circleDefaultClass);
         }
       });
     //добавить 4й элемент
     cy.get('input').clear().type('4444');
     cy.get('button').contains('Добавить').click();
-    cy.get('[class*=circle_content]')
+    cy.get(circleContentClass)
       .should('have.length', '4')
       .each((el, index) => {
-        cy.wrap(el).get('[class*=circle_index]').contains(index);
+        cy.wrap(el).get(circleIndexClass).contains(index);
         if (index === 3) {
-          cy.wrap(el).get('[class*=circle_string]').contains('top');
-          cy.wrap(el).find('[class*=circle_changing]');
+          cy.wrap(el).get(circleStringClass).contains('top');
+          cy.wrap(el).find(circleChangingClass);
         } else {
-          cy.wrap(el).find('[class*=circle_default]');
+          cy.wrap(el).find(circleDefaultClass);
         }
       });
     //проверить цвета
-    cy.get('[class*=circle_content]')
+    cy.get(circleContentClass)
       .each((el) => {
-        cy.wrap(el).find('[class*=circle_default]');
+        cy.wrap(el).find(circleDefaultClass);
       });
 
   });
@@ -85,71 +92,71 @@ describe('stack test', function () {
 
     //удалить 3й элемент
     cy.get('button').contains('Удалить').click();
-    cy.get('[class*=circle_content]')
+    cy.get(circleContentClass)
       .should('have.length', '3')
       .each((el, index) => {
         if (index === 2) {
-          cy.wrap(el).find('[class*=circle_changing]');
-          cy.wrap(el).get('[class*=circle_string]').contains('top');
+          cy.wrap(el).find(circleChangingClass);
+          cy.wrap(el).get(circleStringClass).contains('top');
         } else {
-          cy.wrap(el).find('[class*=circle_default]');
+          cy.wrap(el).find(circleDefaultClass);
         }
-        cy.wrap(el).get('[class*=circle_index]').contains(index);
+        cy.wrap(el).get(circleIndexClass).contains(index);
       });
     //ожидание на смену цвета и удаление
     cy.wait(SHORT_DELAY_IN_MS);
     //проверить количество, цвета и надпись top
-    cy.get('[class*=circle_content]')
+    cy.get(circleContentClass)
       .should('have.length', '2')
       .each((el, index) => {
         if (index === 1) {
-          cy.wrap(el).get('[class*=circle_string]').contains('top');
+          cy.wrap(el).get(circleStringClass).contains('top');
         }
-        cy.wrap(el).find('[class*=circle_default]');
-        cy.wrap(el).get('[class*=circle_index]').contains(index);
+        cy.wrap(el).find(circleDefaultClass);
+        cy.wrap(el).get(circleIndexClass).contains(index);
       });
 
     //удалить 2й элемент
     cy.get('button').contains('Удалить').click();
-    cy.get('[class*=circle_content]')
+    cy.get(circleContentClass)
       .should('have.length', '2')
       .each((el, index) => {
         if (index === 1) {
-          cy.wrap(el).find('[class*=circle_changing]');
-          cy.wrap(el).get('[class*=circle_string]').contains('top');
+          cy.wrap(el).find(circleChangingClass);
+          cy.wrap(el).get(circleStringClass).contains('top');
         } else {
-          cy.wrap(el).find('[class*=circle_default]');
+          cy.wrap(el).find(circleDefaultClass);
         }
-        cy.wrap(el).get('[class*=circle_index]').contains(index);
+        cy.wrap(el).get(circleIndexClass).contains(index);
       });
     //ожидание на смену цвета и удаление
     cy.wait(SHORT_DELAY_IN_MS);
     //проверить количество, цвета и надпись top
-    cy.get('[class*=circle_content]')
+    cy.get(circleContentClass)
       .should('have.length', '1')
       .each((el, index) => {
         if (index === 0) {
-          cy.wrap(el).get('[class*=circle_string]').contains('top');
+          cy.wrap(el).get(circleStringClass).contains('top');
         }
-        cy.wrap(el).find('[class*=circle_default]');
-        cy.wrap(el).get('[class*=circle_index]').contains(index);
+        cy.wrap(el).find(circleDefaultClass);
+        cy.wrap(el).get(circleIndexClass).contains(index);
       });
 
     //удалить 1й элемент
     cy.get('button').contains('Удалить').click();
-    cy.get('[class*=circle_content]')
+    cy.get(circleContentClass)
       .should('have.length', '1')
       .each((el, index) => {
         if (index === 0) {
-          cy.wrap(el).find('[class*=circle_changing]');
-          cy.wrap(el).get('[class*=circle_string]').contains('top');
-        } 
-        cy.wrap(el).get('[class*=circle_index]').contains(index);
+          cy.wrap(el).find(circleChangingClass);
+          cy.wrap(el).get(circleStringClass).contains('top');
+        }
+        cy.wrap(el).get(circleIndexClass).contains(index);
       });
     //ожидание на смену цвета и удаление
     cy.wait(SHORT_DELAY_IN_MS);
     //проверить что элементов не осталось
-    cy.get('[class*=circle_content]').should('not.exist');
+    cy.get(circleContentClass).should('not.exist');
   });
 
   it('stack should be cleared correctly ', () => {
@@ -168,9 +175,9 @@ describe('stack test', function () {
     cy.get('button').contains('Добавить').click();
     cy.get('input').clear().type('77');
     cy.get('button').contains('Добавить').click();
-    cy.get('[class*=circle_content]').should('have.length', '7')
+    cy.get(circleContentClass).should('have.length', '7')
     //очистить очередь    
     cy.get('button').contains('Очистить').click();
-    cy.get('[class*=circle_content]').should('have.length', '0')
+    cy.get(circleContentClass).should('have.length', '0')
   });
 });

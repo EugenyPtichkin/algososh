@@ -1,35 +1,35 @@
 describe('routing is available', function() {
 
   it('should be available on localhost:3000', function() {
-    cy.visit('http://localhost:3000');
+    cy.visit('');
   });
 
   it('string algorithm should be available', function() {
-    cy.visit('http://localhost:3000/recursion');
+    cy.visit('recursion');
   });
 
   it('fibonacci algorithm should be available', function() {
-    cy.visit('http://localhost:3000/fibonacci');
+    cy.visit('fibonacci');
   });
 
   it('sorting algorithm should be available', function() {
-    cy.visit('http://localhost:3000/sorting');
+    cy.visit('sorting');
   });
 
   it('stack algorithm should be available', function() {
-    cy.visit('http://localhost:3000/stack');
+    cy.visit('stack');
   });
 
   it('queue algorithm should be available', function() {
-    cy.visit('http://localhost:3000/queue');
+    cy.visit('queue');
   });
 
   it('connected list algorithm should be available', function() {
-    cy.visit('http://localhost:3000/list');
+    cy.visit('list');
   });
 
   it('unknown page should redirect', function() {
-    cy.visit('http://localhost:3000/asdfasfd');
+    cy.visit('asdfasfd');
   });
 
 }); 
